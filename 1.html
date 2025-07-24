@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สร้างสรรค์ Acer Aspire Lite ของคุณ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styles --- */
+        :root {
+            --primary-blue: #007aff;
+            --light-gray: #f5f5f7;
+            --dark-gray: #1d1d1f;
+            --mid-gray: #86868b;
+            --border-color: #e2e2e7;
+            --shadow-light: rgba(0, 0, 0, 0.01);
+            --shadow-medium: rgba(0, 0, 0, 0.04);
+            --selected-border: #007aff;
+            --red-price: #ff3b30;
+            --error-red: #cc0000;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 15px 0;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.3;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 950px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px var(--shadow-medium);
+            align-items: flex-start;
+            flex-wrap: nowrap;
+            height: calc(100vh - 30px);
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--dark-gray);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        /* --- Configuration Options Section --- */
+        .config-options {
+            flex: 2;
+            min-width: 320px;
+            overflow-y: auto;
+            padding-right: 15px;
+            max-height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .option-group {
+            margin-bottom: 20px;
+        }
+        .option-group:last-of-type {
+            margin-bottom: 15px;
+        }
+        .option-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1.1em;
+            color: var(--dark-gray);
+        }
+        .option-group .radio-options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .option-group input[type="radio"] {
+            display: none;
+        }
+        .option-group input[type="radio"] + label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 18px;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            border-radius: 8px;
+            font-size: 1em;
+            color: var(--dark-gray);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px var(--shadow-light);
+            white-space: nowrap;
+            box-sizing: border-box;
+            text-align: left;
+            flex-grow: 1;
+            min-width: 160px;
+            height: auto;
+        }
+        .option-group input[type="radio"] + label:hover {
+            border-color: var(--mid-gray);
+            box-shadow: 0 2px 6px var(--shadow-medium);
+        }
+        .option-group input[type="radio"]:checked + label {
+            background-color: #fff;
+            color: var(--primary-blue);
+            border-color: var(--selected-border);
+            box-shadow: 0 0 0 2px var(--selected-border), 0 2px 6px var(--shadow-medium);
+        }
+
+        /* Styles for content within radio labels (e.g., CPU, RAM descriptions) */
+        .option-group input[type="radio"] + label .label-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 3px;
+            width: 100%;
+            white-space: normal;
+        }
+        .option-group input[type="radio"] + label .label-content span {
+            font-weight: 500;
+            font-size: 1.05em;
+            line-height: 1.2;
+        }
+        .option-group input[type="radio"] + label .label-content small,
+        .detail-small-grey {
+            font-size: 0.85em;
+            color: var(--mid-gray);
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        /* --- Disabled Option Styles --- */
+        .option-group input[type="radio"]:disabled + label {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--border-color);
+            color: var(--mid-gray);
+            background-color: var(--light-gray);
+            box-shadow: none;
+        }
+        .option-group input[type="radio"]:disabled + label:hover {
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+        .option-group input[type="radio"]:checked:disabled + label {
+            background-color: var(--light-gray);
+            color: var(--mid-gray);
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+
+        /* --- CPU Series Group Styles --- */
+        .cpu-series-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            background-color: #fcfcfc;
+        }
+        .cpu-series-group h3 {
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        .cpu-series-group p {
+            font-size: 0.85em;
+            color: var(--mid-gray);
+            margin-top: -5px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        /* --- Product Image Section --- */
+        .product-image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 300px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            height: 100%;
+            box-sizing: border-box;
+        }
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 5px;
+            transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+        }
+        .product-image.fade-out {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+        .product-image.fade-in {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* --- Total Price Section --- */
+        .total-price {
+            text-align: right;
+            margin-top: auto;
+            padding: 20px 25px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--dark-gray);
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .total-price .price-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .total-price .price-row:last-child {
+            margin-bottom: 0;
+        }
+        .total-price .price-label {
+            font-size: 0.8em;
+            font-weight: 500;
+            color: var(--dark-gray);
+            white-space: nowrap;
+        }
+        .total-price .price-value {
+            font-size: 1.1em;
+            color: var(--primary-blue);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .total-price #cashPaymentPrice {
+            color: var(--red-price);
+        }
+        .total-price small {
+            font-size: 0.6em;
+            color: var(--mid-gray);
+            display: block;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        /* --- Loading & Error Messages --- */
+        #loadingMessage, #errorMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: center;
+            z-index: 1000;
+            min-width: 300px;
+        }
+        #errorMessage {
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+        }
+        #errorMessage h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+            color: var(--error-red);
+        }
+        #errorMessage p {
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: var(--dark-gray);
+            font-weight: 400;
+        }
+        #errorMessage p.suggestion {
+            font-size: 0.85em;
+            color: var(--mid-gray);
+            margin-top: 15px;
+        }
+
+        /* --- Media Queries (Responsive Design) --- */
+        @media (max-width: 850px) {
+            body { padding: 10px; }
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                max-height: calc(100vh - 20px);
+                overflow-y: auto;
+                gap: 15px;
+            }
+            .config-options {
+                width: 100%;
+                padding-right: 0;
+                overflow-y: visible;
+                max-height: unset;
+            }
+            .product-image-container {
+                order: -1;
+                margin-bottom: 15px;
+                min-width: unset;
+                width: 100%;
+                height: 250px;
+            }
+            .product-image { height: 100%; }
+            h1 {
+                font-size: 1.6em;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+            .option-group label {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+            .option-group .radio-options-container { gap: 6px; }
+            .option-group input[type="radio"] + label {
+                padding: 10px 15px;
+                font-size: 0.9em;
+                border-radius: 6px;
+                min-width: unset;
+            }
+            .option-group input[type="radio"] + label .label-content { gap: 2px; }
+            .option-group input[type="radio"] + label .label-content span { font-size: 0.95em; }
+            .option-group input[type="radio"] + label .label-content small,
+            .detail-small-grey { font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="config-options">
+            <h1 id="main_heading_title"></h1>
+
+            <div id="loadingMessage" style="display: none;">กำลังโหลดข้อมูลการตั้งค่า... โปรดรอสักครู่</div>
+            <div id="errorMessage" style="display: none;">
+                <h2 id="error_title"></h2>
+                <p id="error_description_1"></p>
+                <p class="suggestion">
+                    <span id="error_check_label"></span>
+                    <br><span id="error_check_1"></span>
+                    <br><span id="error_check_2"></span>
+                    <br><span id="error_check_3"></span>
+                    <br><span id="error_check_specific_reason"></span> </p>
+            </div>
+
+            <div class="option-group" id="option_group_size">
+                <label id="label_screen_size"></label>
+                <div class="radio-options-container">
+                    <input type="radio" id="size_15_6" name="laptop_size_radio" data-image="https://media-cdn.bnn.in.th/470554/acer-notebook-aspire-lite-15-al15-41p-r47v-silver-a-01-square_medium.jpg" data-cpu-group="group156" checked>
+                    <label for="size_15_6">
+                        <div class="label-content">
+                            <span id="screen_size_15_6_name"></span>
+                            <small id="screen_size_15_6_desc"></small>
+                        </div>
+                    </label>
+
+                    <input type="radio" id="size_16" name="laptop_size_radio" data-image="https://media-cdn.bnn.in.th/454808/acer-notebook-aspire-lite-16-al16-52p-51y1-gray-01.jpg" data-cpu-group="group16">
+                    <label for="size_16">
+                        <div class="label-content">
+                            <span id="screen_size_16_name"></span>
+                            <small id="screen_size_16_desc"></small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="option-group" id="option_group_cpu">
+                <label id="label_cpu"></label>
+                <div class="cpu-series-group" id="cpu_group_15_6">
+                    <h3 id="cpu_u_series_title_15_6"></h3>
+                    <p class="u-series-description"></p>
+                    <div class="radio-options-container" id="cpu_options_group156">
+                        </div>
+                </div>
+
+                <div class="cpu-series-group" id="cpu_group_16">
+                    <h3 id="cpu_u_series_title_16"></h3>
+                    <p class="u-series-description"></p>
+                    <div class="radio-options-container" id="cpu_options_group16">
+                        </div>
+                </div>
+
+                <div class="cpu-series-group" id="cpu_group_h_series">
+                    <h3 id="cpu_h_series_title"></h3>
+                    <p id="h_series_description"></p>
+                    <div class="radio-options-container" id="cpu_options_h_series">
+                        </div>
+                </div>
+            </div>
+
+            <div class="option-group" id="option_group_ram">
+                <label id="label_ram"></label>
+                <div class="radio-options-container">
+                    <input type="radio" id="ram_8gb" name="ram_radio" data-option-id="RAM 8GB" disabled data-initial-disabled="true">
+                    <label for="ram_8gb">
+                        <div class="label-content">
+                            <span id="ram_8gb_name"></span>
+                            <small id="ram_8gb_description"></small>
+                        </div>
+                    </label>
+
+                    <input type="radio" id="ram_16gb" name="ram_radio" data-option-id="RAM 16GB" checked>
+                    <label for="ram_16gb">
+                        <div class="label-content">
+                            <span id="ram_16gb_name"></span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="option-group" id="option_group_ssd">
+                <label id="label_ssd"></label>
+                <div class="radio-options-container">
+                    <input type="radio" id="ssd_512gb_gen3" name="ssd_radio" data-option-id="SSD Gen 3 512GB" data-ssd-gen="3" checked>
+                    <label for="ssd_512gb_gen3">
+                        <div class="label-content">
+                            <span id="ssd_gen3_name"></span>
+                            <small class="detail-small-grey" id="ssd_gen3_description"></small>
+                        </div>
+                    </label>
+
+                    <input type="radio" id="ssd_512gb_gen4" name="ssd_radio" data-option-id="SSD Gen 4 512GB" data-ssd-gen="4">
+                    <label for="ssd_512gb_gen4">
+                        <div class="label-content">
+                            <span id="ssd_gen4_name"></span>
+                            <small class="detail-small-grey" id="ssd_gen4_description"></small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="option-group" id="option_group_windows">
+                <label id="label_windows"></label>
+                <div class="radio-options-container">
+                    <input type="radio" id="windows_11_home" name="windows_radio" data-option-id="Windows 11 Home" checked>
+                    <label for="windows_11_home">
+                        <div class="label-content">
+                            <span id="windows_11_home_name"></span>
+                            <small id="windows_11_home_description"></small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="option-group" id="option_group_office">
+                <label id="label_office"></label>
+                <div class="radio-options-container">
+                    <input type="radio" id="office_2024" name="office_radio" data-option-id="Microsoft Office 2024 Home" checked>
+                    <label for="office_2024">
+                        <div class="label-content">
+                            <span id="office_2024_name"></span>
+                            <small id="office_2024_description"></small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="total-price" id="total_price_section">
+                <div class="price-row">
+                    <span class="price-label" id="price_installment_label"></span>
+                    <span class="price-value" id="installmentPrice">0</span><span id="price_unit_installment"></span>
+                </div>
+                <div class="price-row">
+                    <span class="price-label" id="price_cash_label"></span>
+                    <span class="price-value" id="cashPaymentPrice">0</span><span id="price_unit_cash"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-image-container">
+            <img id="productImage" src="https://media-cdn.bnn.in.th/470554/acer-notebook-aspire-lite-15-al15-41p-r47v-silver-a-01-square_medium.jpg" alt="รูปภาพคอมพิวเตอร์" class="product-image">
+        </div>
+    </div>
+
+    <script>
+        // --- การห่อหุ้มโค้ดทั้งหมดใน IIFE (Immediately Invoked Function Expression) ---
+        // เพื่อป้องกันไม่ให้ตัวแปรและฟังก์ชันต่างๆ ไปปะปนกับ Global Scope
+        (function() {
+
+            // --- ส่วนที่ 1: การตั้งค่าข้อมูลหลัก (Configuration Data) ---
+            // URL ของ Google Sheet CSV ที่คุณเผยแพร่ไว้
+            // ***** สำคัญมาก! *****
+            // คุณต้องไปที่ Google Sheet ของคุณ > ไฟล์ (File) > แชร์ (Share) > เผยแพร่ไปยังเว็บ (Publish to web)
+            // เลือก "แท็บ ACER_DATA" และเลือก "Comma-separated values (.csv)" แล้วคัดลอกลิงก์นั้นมาวางตรงนี้
+            // ลิงก์ที่ถูกต้องจะลงท้ายด้วย pub?output=csv
+            const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTTMANBtr1zMXdrfz75Pfa7YkWOF97IhfgWFRz9KE4WoZOX0dQXVt6t7VPfjxjFbkH3SSb451ZfmuYR/pub?gid=754160478&single=true&output=csv';
+
+            // ค่าคงที่สำหรับอัตราส่วนเพิ่มของราคารูด/ผ่อน
+            const INSTALLMENT_MULTIPLIER = 1.03; // 3% increase
+
+            // --- ส่วนที่ 2: การเข้าถึง Elements ใน HTML (DOM Elements) ---
+            // รวบรวม Elements ที่ใช้บ่อยไว้ใน Object เดียว เพื่อความสะดวก
+            const DOM = {
+                mainContainer: document.querySelector('.main-container'),
+                loadingMessage: document.getElementById('loadingMessage'),
+                errorMessage: document.getElementById('errorMessage'),
+
+                laptopSizeRadios: document.querySelectorAll('input[name="laptop_size_radio"]'),
+                processorRadios: null, // จะถูกกำหนดหลัง CPU options ถูกสร้าง
+                ramRadios: document.querySelectorAll('input[name="ram_radio"]'),
+                ssdRadios: document.querySelectorAll('input[name="ssd_radio"]'),
+                windowsRadios: document.querySelectorAll('input[name="windows_radio"]'),
+                officeRadios: document.querySelectorAll('input[name="office_radio"]'),
+
+                cashPaymentPriceSpan: document.getElementById('cashPaymentPrice'),
+                installmentPriceSpan: document.getElementById('installmentPrice'),
+                productImage: document.getElementById('productImage'),
+
+                cpuGroup15_6: document.getElementById('cpu_group_15_6'),
+                cpuOptionsGroup15_6Container: document.getElementById('cpu_options_group156'),
+                cpuGroup16: document.getElementById('cpu_group_16'),
+                cpuOptionsGroup16Container: document.getElementById('cpu_options_group16'),
+                cpuGroupHSeries: document.getElementById('cpu_group_h_series'),
+                cpuOptionsHSeriesContainer: document.getElementById('cpu_options_h_series'),
+
+                // Elements for dynamic text from Google Sheet
+                mainHeadingTitle: document.getElementById('main_heading_title'),
+                labelScreenSize: document.getElementById('label_screen_size'),
+                screenSize15_6Name: document.getElementById('screen_size_15_6_name'),
+                screenSize15_6Desc: document.getElementById('screen_size_15_6_desc'),
+                screenSize16Name: document.getElementById('screen_size_16_name'),
+                screenSize16Desc: document.getElementById('screen_size_16_desc'),
+
+                labelCpu: document.getElementById('label_cpu'),
+                cpuUSeriesTitle15_6: document.getElementById('cpu_u_series_title_15_6'),
+                cpuUSeriesTitle16: document.getElementById('cpu_u_series_title_16'),
+                uSeriesDescriptions: document.querySelectorAll('.u-series-description'), // Use querySelectorAll for multiple elements
+                cpuHSeriesTitle: document.getElementById('cpu_h_series_title'),
+                hSeriesDescription: document.getElementById('h_series_description'),
+
+                labelRam: document.getElementById('label_ram'),
+                ram8gbName: document.getElementById('ram_8gb_name'),
+                ram8gbDescription: document.getElementById('ram_8gb_description'),
+                ram16gbName: document.getElementById('ram_16gb_name'),
+
+                labelSsd: document.getElementById('label_ssd'),
+                ssdGen3Name: document.getElementById('ssd_gen3_name'),
+                ssdGen3Description: document.getElementById('ssd_gen3_description'),
+                ssdGen4Name: document.getElementById('ssd_gen4_name'),
+                ssdGen4Description: document.getElementById('ssd_gen4_description'),
+
+                labelWindows: document.getElementById('label_windows'),
+                windows11HomeName: document.getElementById('windows_11_home_name'),
+                windows11HomeDescription: document.getElementById('windows_11_home_description'),
+
+                labelOffice: document.getElementById('label_office'),
+                office2024Name: document.getElementById('office_2024_name'),
+                office2024Description: document.getElementById('office_2024_description'),
+
+                priceInstallmentLabel: document.getElementById('price_installment_label'),
+                priceCashLabel: document.getElementById('price_cash_label'),
+                priceUnitInstallment: document.getElementById('price_unit_installment'), // For "บาท"
+                priceUnitCash: document.getElementById('price_unit_cash'), // For "บาท"
+
+                // Removed loadingMessageText as it's now hardcoded
+                errorTitle: document.getElementById('error_title'),
+                errorDescription1: document.getElementById('error_description_1'),
+                errorCheckLabel: document.getElementById('error_check_label'),
+                errorCheck1: document.getElementById('error_check_1'),
+                errorCheck2: document.getElementById('error_check_2'),
+                errorCheck3: document.getElementById('error_check_3'),
+                errorCheckSpecificReason: document.getElementById('error_check_specific_reason'), // New element for specific error details
+            };
+
+            // --- ส่วนที่ 3: การจัดการ State (State Management) ---
+            // appState: Object กลางสำหรับเก็บข้อมูลและสถานะของแอปพลิเคชัน
+            const appState = {
+                data: {
+                    prices: {}, // { 'option_id': { fullPrice: X, cashPrice: Y, disabled: B, reason: 'Z' } }
+                    hSeriesCpusRequiring16GB: [],
+                    ssdGen4CompatibleCpus: [],
+                    allComponentsRaw: [], // เก็บข้อมูลดิบจากชีททั้งหมด
+                    pageText: {} // เก็บข้อความทั้งหมดที่ดึงมาจากชีท
+                },
+                selections: {
+                    size: 'size_15_6', // Default selected size ID
+                    cpu: null,
+                    ram: 'RAM 16GB', // Default selected RAM ID
+                    ssd: 'SSD Gen 3 512GB', // Default selected SSD ID
+                    windows: 'Windows 11 Home', // Default selected Windows ID
+                    office: 'Microsoft Office 2024 Home' // Default selected Office ID
+                },
+                ui: {
+                    initialImage: DOM.productImage.src // Store initial image src
+                }
+            };
+
+
+            // --- ส่วนที่ 4: ฟังก์ชันยูทิลิตี้ (Utility Functions) ---
+
+            /**
+             * Parses CSV text into an array of objects.
+             * Assumes the first row is headers.
+             * @param {string} csvString The CSV data as a string.
+             * @returns {Array<Object>} An array of objects, where each object represents a row.
+             */
+            function parseCSV(csvString) {
+                const lines = csvString.split('\n').filter(line => line.trim() !== ''); // Filter out empty lines
+                if (lines.length === 0) return [];
+
+                const headers = lines[0].split(',').map(header => header.trim());
+                const data = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(value => value.trim());
+                    const rowObject = {};
+                    headers.forEach((header, index) => {
+                        rowObject[header] = values[index] !== undefined ? values[index] : ''; // Handle missing values gracefully
+                    });
+                    data.push(rowObject);
+                }
+                return data;
+            }
+
+            /**
+             * Fetches data from Google Sheet CSV and parses it.
+             * @returns {Promise<Array<Object>>} A promise that resolves with the parsed data.
+             */
+            async function fetchCsvData(url) {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - Could not access Google Sheet. Check URL or network connection.`);
+                }
+                const csvText = await response.text();
+                return parseCSV(csvText);
+            }
+
+            /**
+             * Checks if the Google Sheet URL is accessible and returns valid CSV.
+             * This function helps to give a clearer error message to the user.
+             * @param {string} url The Google Sheet CSV URL.
+             * @returns {Promise<{success: boolean, type?: string, message?: string}>} Object with status and error details.
+             */
+            async function checkSheetAccessibility(url) {
+                try {
+                    const data = await fetchCsvData(url);
+                    if (data.length === 0) {
+                        return { success: false, type: 'EMPTY_CSV', message: 'The CSV data from the sheet is empty.' };
+                    }
+                    // Basic check: ensure required headers are present
+                    const requiredHeaders = ['option_id', 'component_type', 'full_price', 'cash_price'];
+                    const firstRowKeys = Object.keys(data[0] || {});
+                    const missingHeaders = requiredHeaders.filter(header => !firstRowKeys.includes(header));
+
+                    if (missingHeaders.length > 0) {
+                        return { success: false, type: 'MISSING_HEADERS', message: `Missing required headers: ${missingHeaders.join(', ')}` };
+                    }
+                    return { success: true };
+                } catch (error) {
+                    let errorMessage = error.message;
+                    let errorType = 'UNKNOWN_FETCH_ERROR';
+
+                    if (error.message.includes('Failed to fetch')) {
+                        errorType = 'NETWORK_ERROR';
+                        errorMessage = 'Network error or CORS issue. The Google Sheet URL might be incorrect or inaccessible.';
+                    } else if (error.message.includes('HTTP error!')) {
+                        errorType = 'HTTP_ERROR';
+                        errorMessage = error.message; // Use the specific HTTP error message
+                    } else if (error.message.includes('Could not access Google Sheet')) {
+                        errorType = 'SHEET_ACCESS_ERROR';
+                        errorMessage = error.message;
+                    } else if (error.message.includes('parsing')) {
+                        errorType = 'CSV_PARSE_ERROR';
+                        errorMessage = 'Failed to parse CSV data. Sheet format might be incorrect.';
+                    }
+
+                    return { success: false, type: errorType, message: errorMessage };
+                }
+            }
+
+            /**
+             * Populates the appState.data structures and dynamically creates CPU options in the HTML.
+             */
+            async function populateConfigData() {
+                // Clear existing dynamic data structures in appState
+                appState.data.prices = {};
+                appState.data.hSeriesCpusRequiring16GB = [];
+                appState.data.ssdGen4CompatibleCpus = [];
+                appState.data.allComponentsRaw = [];
+                appState.data.pageText = {};
+
+                // Reset CPU radio containers before adding new ones
+                DOM.cpuOptionsGroup15_6Container.innerHTML = '';
+                DOM.cpuOptionsGroup16Container.innerHTML = '';
+                DOM.cpuOptionsHSeriesContainer.innerHTML = '';
+
+                appState.data.allComponentsRaw = await fetchCsvData(GOOGLE_SHEET_CSV_URL);
+
+                appState.data.allComponentsRaw.forEach(row => {
+                    const optionId = row.option_id;
+                    const componentType = row.component_type;
+
+                    if (!optionId || !componentType) {
+                        console.warn('Skipping row due to missing option_id or component_type:', row);
+                        return;
+                    }
+
+                    // Populate appState.data.prices object
+                    appState.data.prices[optionId] = {
+                        fullPrice: parseFloat(row.full_price || 0),
+                        cashPrice: parseFloat(row.cash_price || 0),
+                        disabled: row.is_disabled === 'TRUE',
+                        reason: row.disabled_reason || ''
+                    };
+
+                    // Check for PAGE_TEXT to extract descriptions and labels
+                    if (componentType === 'PAGE_TEXT') {
+                        appState.data.pageText[optionId] = row.description || '';
+                    } else if (componentType === 'CPU') {
+                        const idFormatted = optionId.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase(); // Create a valid HTML ID
+                        const cpuId = `cpu_${idFormatted}`;
+                        const isHSeries = row.h_series === 'TRUE';
+                        const compatibleSize = row.compatible_size;
+                        const year = row.year;
+                        const arc = row.arc;
+
+                        if (isHSeries) {
+                            appState.data.hSeriesCpusRequiring16GB.push(optionId);
+                        }
+
+                        if (row.ssd_gen4_compatible && row.ssd_gen4_compatible.trim().toLowerCase() === 'true') {
+                            appState.data.ssdGen4CompatibleCpus.push(optionId);
+                        }
+
+                        const input = document.createElement('input');
+                        input.type = 'radio';
+                        input.id = cpuId;
+                        input.name = 'processor_radio';
+                        input.setAttribute('data-option-id', optionId);
+                        input.setAttribute('data-cpu-type', row.cpu_type || '');
+                        input.setAttribute('data-compatible-size', compatibleSize || '');
+                        if (row.zen_version) input.setAttribute('data-zen-version', row.zen_version);
+                        if (isHSeries) input.setAttribute('data-h-series', 'true');
+                        if (appState.data.prices[optionId].disabled) {
+                            input.disabled = true;
+                            input.setAttribute('data-initial-disabled', 'true'); // Keep original disabled state from sheet
+                        }
+
+                        const label = document.createElement('label');
+                        label.htmlFor = cpuId;
+
+                        let fullDescriptionParts = [];
+                        if (arc) fullDescriptionParts.push(arc);
+                        if (year) fullDescriptionParts.push(year);
+                        const descriptionHtml = fullDescriptionParts.length > 0 ? `<small>${fullDescriptionParts.join(', ')}</small>` : '';
+
+                        label.innerHTML = `
+                            <div class="label-content">
+                                <span>${optionId}</span>
+                                ${descriptionHtml}
+                            </div>
+                        `;
+
+                        let targetContainer;
+                        if (isHSeries) {
+                            targetContainer = DOM.cpuOptionsHSeriesContainer;
+                        } else if (compatibleSize === 'group156') {
+                            targetContainer = DOM.cpuOptionsGroup15_6Container;
+                        } else if (compatibleSize === 'group16') {
+                            targetContainer = DOM.cpuOptionsGroup16Container;
+                        }
+                        if (targetContainer) {
+                            targetContainer.appendChild(input);
+                            targetContainer.appendChild(label);
+                        }
+                    } else {
+                        // Update disabled states for existing static options (RAM, SSD, Windows, Office)
+                        const existingInput = document.querySelector(`input[data-option-id="${optionId}"]`);
+                        if (existingInput) {
+                            existingInput.disabled = appState.data.prices[optionId].disabled;
+                            if (appState.data.prices[optionId].disabled) {
+                                existingInput.setAttribute('data-initial-disabled', 'true');
+                            } else {
+                                existingInput.removeAttribute('data-initial-disabled');
+                            }
+                        }
+                    }
+                });
+
+                // Update DOM.processorRadios after they've been created
+                DOM.processorRadios = document.querySelectorAll('input[name="processor_radio"]');
+
+                // Set the fetched text content for all dynamic elements using appState.data.pageText
+                DOM.mainHeadingTitle.textContent = appState.data.pageText.Main_Heading_Title || '';
+                DOM.labelScreenSize.textContent = appState.data.pageText.ScreenSize_Label || '';
+                DOM.screenSize15_6Name.textContent = appState.data.pageText.ScreenSize_15_6_Name || '';
+                DOM.screenSize15_6Desc.textContent = appState.data.pageText.ScreenSize_15_6_Desc || '';
+                DOM.screenSize16Name.textContent = appState.data.pageText.ScreenSize_16_Name || '';
+                DOM.screenSize16Desc.textContent = appState.data.pageText.ScreenSize_16_Desc || '';
+
+                DOM.labelCpu.textContent = appState.data.pageText.CPU_Label || '';
+                DOM.cpuUSeriesTitle15_6.textContent = appState.data.pageText.CPU_U_Series_Title || '';
+                DOM.cpuUSeriesTitle16.textContent = appState.data.pageText.CPU_U_Series_Title || '';
+                DOM.uSeriesDescriptions.forEach(el => el.innerHTML = appState.data.pageText['U-Series_Text'] || '');
+                DOM.cpuHSeriesTitle.textContent = appState.data.pageText.CPU_H_Series_Title || '';
+                DOM.hSeriesDescription.innerHTML = appState.data.pageText['H-Series_Text'] || '';
+
+                DOM.labelRam.textContent = appState.data.pageText.RAM_Label || '';
+                DOM.ram8gbName.textContent = appState.data.pageText.RAM_8GB_Name || '';
+                DOM.ram8gbDescription.textContent = appState.data.pageText.RAM_8GB_Disabled_Text || ''; // This specific one is for disabled text
+                DOM.ram16gbName.textContent = appState.data.pageText.RAM_16GB_Name || '';
+
+                DOM.labelSsd.textContent = appState.data.pageText.SSD_Label || '';
+                DOM.ssdGen3Name.textContent = appState.data.pageText.SSD_Gen3_Name || '';
+                DOM.ssdGen3Description.textContent = appState.data.pageText.SSD_Gen3_Desc || '';
+                DOM.ssdGen4Name.textContent = appState.data.pageText.SSD_Gen4_Name || '';
+                DOM.ssdGen4Description.textContent = appState.data.pageText.SSD_Gen4_Desc || '';
+
+                DOM.labelWindows.textContent = appState.data.pageText.Windows_Label || '';
+                DOM.windows11HomeName.textContent = appState.data.pageText.Windows_11_Home_Name || '';
+                DOM.windows11HomeDescription.textContent = appState.data.pageText.Windows_11_Home_Desc || '';
+
+                DOM.labelOffice.textContent = appState.data.pageText.Office_Label || '';
+                DOM.office2024Name.textContent = appState.data.pageText.Office_2024_Name || '';
+                DOM.office2024Description.textContent = appState.data.pageText.Office_2024_Desc || '';
+
+                DOM.priceInstallmentLabel.textContent = appState.data.pageText.Price_Installment_Label || '';
+                DOM.priceCashLabel.textContent = appState.data.pageText.Price_Cash_Label || '';
+                DOM.priceUnitInstallment.textContent = ' ' + (appState.data.pageText.Price_Unit || ''); // Add space
+                DOM.priceUnitCash.textContent = ' ' + (appState.data.pageText.Price_Unit || ''); // Add space
+
+                // Removed line for loadingMessageText
+                DOM.errorTitle.textContent = appState.data.pageText.Error_Title || '';
+                DOM.errorDescription1.textContent = appState.data.pageText.Error_Desc_1 || '';
+                DOM.errorCheckLabel.textContent = appState.data.pageText.Error_Check_Label || '';
+                DOM.errorCheck1.textContent = appState.data.pageText.Error_Check_1 || '';
+                DOM.errorCheck2.textContent = appState.data.pageText.Error_Check_2 || '';
+                DOM.errorCheck3.textContent = appState.data.pageText.Error_Check_3 || '';
+                // Specific error reason will be set by initializePage
+                DOM.errorCheckSpecificReason.textContent = '';
+            }
+
+            /**
+             * Updates the product image based on the selected screen size.
+             */
+            function updateProductImage() {
+                let selectedSizeImage = '';
+                // Get the image from the currently selected size radio
+                const selectedSizeRadio = document.querySelector('input[name="laptop_size_radio"]:checked');
+                if (selectedSizeRadio) {
+                    selectedSizeImage = selectedSizeRadio.getAttribute('data-image');
+                }
+
+                const newImageSrc = selectedSizeImage || appState.ui.initialImage; // Fallback to initial image
+                if (DOM.productImage.src === newImageSrc) return; // No change needed
+
+                DOM.productImage.classList.add('fade-out');
+                setTimeout(() => {
+                    DOM.productImage.src = newImageSrc;
+                    DOM.productImage.classList.remove('fade-out');
+                    DOM.productImage.classList.add('fade-in');
+                }, 50); // Small delay for CSS transition
+                setTimeout(() => {
+                    DOM.productImage.classList.remove('fade-in');
+                }, 200);
+            }
+
+            /**
+             * Sorts CPU options within their groups by full price (ascending).
+             */
+            function sortCpuOptions() {
+                const cpuSeriesGroups = document.querySelectorAll('.cpu-series-group');
+
+                cpuSeriesGroups.forEach(group => {
+                    const container = group.querySelector('.radio-options-container');
+                    if (!container) return;
+
+                    const cpuElements = [];
+                    const inputs = container.querySelectorAll('input[type="radio"][name="processor_radio"]');
+                    inputs.forEach(input => {
+                        const optionId = input.getAttribute('data-option-id');
+                        const priceData = appState.data.prices[optionId];
+                        const fullPrice = priceData ? priceData.fullPrice : Infinity; // Use Infinity for missing prices
+
+                        const label = container.querySelector(`label[for="${input.id}"]`);
+                        if (label) {
+                            cpuElements.push({ input: input, label: label, price: fullPrice });
+                        }
+                    });
+
+                    cpuElements.sort((a, b) => a.price - b.price);
+
+                    container.innerHTML = ''; // Clear container
+                    cpuElements.forEach(item => {
+                        container.appendChild(item.input);
+                        container.appendChild(item.label);
+                    });
+                });
+            }
+
+            /**
+             * Manages RAM compatibility based on the selected CPU.
+             * @param {string | null} selectedCpuOptionId - The option-id (full name) of the selected CPU, or null if no CPU.
+             */
+            function handleRamCompatibility(selectedCpuOptionId) {
+                let defaultRamSelected = false;
+                const isHSeriesCpu = selectedCpuOptionId ? appState.data.hSeriesCpusRequiring16GB.includes(selectedCpuOptionId) : false;
+
+                // First, disable all RAM options based on their initial disabled state from the sheet
+                DOM.ramRadios.forEach(radio => {
+                    const optionId = radio.getAttribute('data-option-id');
+                    const priceInfo = appState.data.prices[optionId] || {};
+                    const isInitiallyDisabled = priceInfo.disabled || radio.hasAttribute('data-initial-disabled');
+
+                    radio.disabled = isInitiallyDisabled; // Restore initial disabled state
+                    radio.checked = false; // Uncheck all for re-evaluation
+                });
+
+                const ram16gb = document.getElementById('ram_16gb');
+                const ram8gb = document.getElementById('ram_8gb');
+                const ram16gbOptionId = ram16gb ? ram16gb.getAttribute('data-option-id') : null;
+                const ram8gbOptionId = ram8gb ? ram8gb.getAttribute('data-option-id') : null;
+
+                // Logic to enable and select RAM
+                if (isHSeriesCpu) {
+                    // For H-Series, prioritize 16GB. If 16GB is disabled, enable 8GB if available.
+                    if (ram16gb && !appState.data.prices[ram16gbOptionId].disabled) {
+                        ram16gb.disabled = false;
+                        ram16gb.checked = true;
+                        defaultRamSelected = true;
+                        appState.selections.ram = ram16gbOptionId;
+                    } else if (ram8gb && !appState.data.prices[ram8gbOptionId].disabled) {
+                        ram8gb.disabled = false;
+                        ram8gb.checked = true;
+                        defaultRamSelected = true;
+                        appState.selections.ram = ram8gbOptionId;
+                    }
+                } else { // For U-Series CPUs or if no CPU is selected
+                    // Prioritize 16GB if available and not disabled
+                    if (ram16gb && !appState.data.prices[ram16gbOptionId].disabled) {
+                        ram16gb.disabled = false;
+                        ram16gb.checked = true;
+                        defaultRamSelected = true;
+                        appState.selections.ram = ram16gbOptionId;
+                    }
+                    // If 16GB is not available/selected, check 8GB
+                    if (!defaultRamSelected && ram8gb && !appState.data.prices[ram8gbOptionId].disabled) {
+                        ram8gb.disabled = false;
+                        ram8gb.checked = true;
+                        defaultRamSelected = true;
+                        appState.selections.ram = ram8gbOptionId;
+                    }
+                }
+
+                // Fallback: If no RAM is selected after all logic (e.g., both are disabled in sheet for that CPU type)
+                if (!defaultRamSelected) {
+                    DOM.ramRadios.forEach(radio => {
+                        radio.disabled = true; // Ensure all are disabled if none can be selected
+                        radio.checked = false; // Ensure none are checked
+                    });
+                    appState.selections.ram = null;
+                }
+            }
+
+            /**
+             * Manages SSD compatibility based on the selected CPU.
+             * @param {string | null} selectedCpuOptionId - The option-id (full name) of the selected CPU, or null if no CPU.
+             */
+            function handleSsdCompatibility(selectedCpuOptionId) {
+                // 1. Reset and apply initial disabled state from sheet for all SSDs
+                DOM.ssdRadios.forEach(radio => {
+                    const optionId = radio.getAttribute('data-option-id');
+                    const priceInfo = appState.data.prices[optionId] || {};
+                    const isInitiallyDisabled = priceInfo.disabled || radio.hasAttribute('data-initial-disabled');
+
+                    radio.disabled = isInitiallyDisabled; // Restore initial disabled state
+                    radio.checked = false; // Uncheck all for re-evaluation
+                });
+
+                const ssdGen4 = document.getElementById('ssd_512gb_gen4');
+                const ssdGen3 = document.getElementById('ssd_512gb_gen3');
+                const ssdGen4OptionId = ssdGen4 ? ssdGen4.getAttribute('data-option-id') : null;
+                const ssdGen3OptionId = ssdGen3 ? ssdGen3.getAttribute('data-option-id') : null;
+
+                const isGen4CompatibleCpu = selectedCpuOptionId ? appState.data.ssdGen4CompatibleCpus.includes(selectedCpuOptionId) : false;
+
+                let selectedSsd = null;
+                let defaultSsdSelected = false;
+
+                if (isGen4CompatibleCpu) {
+                    // If CPU is Gen4 compatible (e.g., specific Intel CPUs)
+                    // Disable Gen3 SSD, regardless of its sheet-defined disabled state.
+                    if (ssdGen3) {
+                        ssdGen3.disabled = true;
+                        ssdGen3.checked = false; // Ensure it's not checked
+                    }
+
+                    // Only enable Gen4 if it's not initially disabled by sheet
+                    if (ssdGen4 && !appState.data.prices[ssdGen4OptionId].disabled) {
+                        ssdGen4.disabled = false;
+                        ssdGen4.checked = true; // Attempt to select Gen4
+                        selectedSsd = ssdGen4OptionId;
+                        defaultSsdSelected = true;
+                    }
+                } else {
+                    // If CPU is NOT Gen4 compatible (e.g., U-series AMD, or other non-Gen4 Intel)
+                    // Disable Gen4 SSD, regardless of its sheet-defined disabled state.
+                    if (ssdGen4) {
+                        ssdGen4.disabled = true;
+                        ssdGen4.checked = false; // Ensure it's not checked
+                    }
+
+                    // Only enable Gen3 if it's not initially disabled by sheet
+                    if (ssdGen3 && !appState.data.prices[ssdGen3OptionId].disabled) {
+                        ssdGen3.disabled = false;
+                        ssdGen3.checked = true; // Attempt to select Gen3
+                        selectedSsd = ssdGen3OptionId;
+                        defaultSsdSelected = true;
+                    }
+                }
+
+                // Update appState.selections.ssd based on what was selected
+                appState.selections.ssd = selectedSsd;
+
+                // Fallback: if no SSD is selected after all logic (e.g., both are disabled for the current CPU type)
+                if (!defaultSsdSelected) {
+                    DOM.ssdRadios.forEach(radio => {
+                        radio.disabled = true; // Ensure all are disabled if none can be selected
+                        radio.checked = false; // Ensure none are checked
+                    });
+                    appState.selections.ssd = null;
+                }
+            }
+
+
+            /**
+             * Main function to handle component dependencies (CPU, RAM, SSD based on size and other selections).
+             * Called when laptop size or CPU changes.
+             */
+            function handleComponentDependencies() {
+                // Update selected size in appState
+                const selectedSizeRadio = document.querySelector('input[name="laptop_size_radio"]:checked');
+                appState.selections.size = selectedSizeRadio ? selectedSizeRadio.id : null;
+                const selectedLaptopSizeGroup = selectedSizeRadio ? selectedSizeRadio.getAttribute('data-cpu-group') : null;
+
+                // Show/hide CPU groups based on selected laptop size
+                DOM.cpuGroup15_6.style.display = (selectedLaptopSizeGroup === 'group156') ? 'block' : 'none';
+                DOM.cpuOptionsGroup15_6Container.style.display = (selectedLaptopSizeGroup === 'group156') ? 'flex' : 'none';
+
+                DOM.cpuGroupHSeries.style.display = (selectedLaptopSizeGroup === 'group156') ? 'block' : 'none';
+                DOM.cpuOptionsHSeriesContainer.style.display = (selectedLaptopSizeGroup === 'group156') ? 'flex' : 'none';
+
+                DOM.cpuGroup16.style.display = (selectedLaptopSizeGroup === 'group16') ? 'block' : 'none';
+                DOM.cpuOptionsGroup16Container.style.display = (selectedLaptopSizeGroup === 'group16') ? 'flex' : 'none';
+
+                // Re-query processor radios as they are dynamically created
+                DOM.processorRadios = document.querySelectorAll('input[name="processor_radio"]');
+
+                let selectedCpuOptionId = appState.selections.cpu; // Get previously selected CPU from state
+                let foundCheckedCpu = false;
+
+                // 1. Reset all CPU radios (enable and show if not initially disabled from sheet)
+                DOM.processorRadios.forEach(radio => {
+                    const labelElement = document.querySelector(`label[for="${radio.id}"]`);
+                    const optionId = radio.getAttribute('data-option-id');
+                    const priceInfo = appState.data.prices[optionId] || {};
+                    const isInitiallyDisabledFromSheet = priceInfo.disabled || false;
+
+                    radio.disabled = isInitiallyDisabledFromSheet;
+                    if (labelElement) {
+                        labelElement.style.display = 'flex'; // Show all initially
+                    }
+                    radio.checked = false; // Uncheck all for re-evaluation
+                });
+
+                // 2. Disable and hide CPUs that are not compatible with the selected screen size
+                const compatibleCpusForSelectedSize = [];
+                DOM.processorRadios.forEach(radio => {
+                    const compatibleSizeAttr = radio.getAttribute('data-compatible-size');
+                    const isHSeriesCpu = radio.getAttribute('data-h-series') === 'true';
+                    const optionId = radio.getAttribute('data-option-id');
+                    const priceInfo = appState.data.prices[optionId] || {};
+                    const isExplicitlyDisabled = priceInfo.disabled || false;
+
+                    let belongsToActiveGroup = false;
+                    if (selectedLaptopSizeGroup === 'group156' && (compatibleSizeAttr === 'group156' || isHSeriesCpu)) {
+                        belongsToActiveGroup = true;
+                    } else if (selectedLaptopSizeGroup === 'group16' && compatibleSizeAttr === 'group16') {
+                        belongsToActiveGroup = true;
+                    }
+
+                    if (!belongsToActiveGroup || isExplicitlyDisabled) {
+                        radio.disabled = true;
+                        const labelElement = document.querySelector(`label[for="${radio.id}"]`);
+                        if (labelElement) {
+                            labelElement.style.display = 'none'; // Hide incompatible/disabled CPUs
+                        }
+                    } else {
+                        compatibleCpusForSelectedSize.push(radio); // Add to list of compatible CPUs
+                    }
+                });
+
+                // 3. Select the most appropriate CPU: prioritize previously selected, then first compatible enabled CPU.
+                let targetCpuRadio = null;
+                if (selectedCpuOptionId) {
+                    // Try to re-select the CPU that was previously chosen
+                    targetCpuRadio = document.querySelector(`input[name="processor_radio"][data-option-id="${selectedCpuOptionId}"]`);
+                    if (targetCpuRadio && targetCpuRadio.disabled) { // If previously selected CPU is now disabled/incompatible
+                        targetCpuRadio = null; // Clear it, will pick a new one
+                    }
+                }
+
+                if (!targetCpuRadio && compatibleCpusForSelectedSize.length > 0) {
+                    // If no previous CPU or it's now invalid, pick the first compatible enabled CPU
+                    targetCpuRadio = compatibleCpusForSelectedSize.find(cpu => !cpu.disabled);
+                }
+
+                if (targetCpuRadio) {
+                    targetCpuRadio.checked = true;
+                    appState.selections.cpu = targetCpuRadio.getAttribute('data-option-id');
+                    foundCheckedCpu = true;
+                } else {
+                    appState.selections.cpu = null; // No CPU selected
+                }
+
+                // If no CPU is selected after all logic, ensure none are checked
+                if (!foundCheckedCpu) {
+                    DOM.processorRadios.forEach(radio => radio.checked = false);
+                }
+
+                // Call RAM and SSD compatibility functions using the selected CPU (or null if none)
+                handleRamCompatibility(appState.selections.cpu);
+                handleSsdCompatibility(appState.selections.cpu);
+
+                calculateTotalPrice(); // Update total price and image after all dependencies are resolved
+            }
+
+            /**
+             * Calculates and displays the total price based on selected components.
+             */
+            function calculateTotalPrice() {
+                let totalFullPrice = 0;
+                let totalCashPrice = 0;
+
+                // Update selected items in appState.selections before calculation
+                appState.selections.cpu = document.querySelector('input[name="processor_radio"]:checked')?.getAttribute('data-option-id') || null;
+                appState.selections.ram = document.querySelector('input[name="ram_radio"]:checked')?.getAttribute('data-option-id') || null;
+                appState.selections.ssd = document.querySelector('input[name="ssd_radio"]:checked')?.getAttribute('data-option-id') || null;
+                appState.selections.windows = document.querySelector('input[name="windows_radio"]:checked')?.getAttribute('data-option-id') || null;
+                appState.selections.office = document.querySelector('input[name="office_radio"]:checked')?.getAttribute('data-option-id') || null;
+
+                const selectedOptionIds = [
+                    appState.selections.cpu,
+                    appState.selections.ram,
+                    appState.selections.ssd,
+                    appState.selections.windows,
+                    appState.selections.office
+                ].filter(id => id !== null); // Filter out nulls
+
+                selectedOptionIds.forEach(optionId => {
+                    const priceData = appState.data.prices[optionId];
+                    if (priceData) {
+                        totalFullPrice += priceData.fullPrice !== undefined ? priceData.fullPrice : 0;
+                        totalCashPrice += priceData.cashPrice !== undefined ? priceData.cashPrice : 0;
+                    } else {
+                        console.warn(`Price data not found for optionId: ${optionId}`);
+                    }
+                });
+
+                const installmentFinalPrice = totalFullPrice * INSTALLMENT_MULTIPLIER;
+
+                DOM.installmentPriceSpan.textContent = installmentFinalPrice.toLocaleString(undefined, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                });
+                DOM.cashPaymentPriceSpan.textContent = totalCashPrice.toLocaleString();
+
+                updateProductImage();
+            }
+
+            // --- ส่วนที่ 5: การตั้งค่า Event Listeners ---
+
+            /**
+             * Handles change events for all relevant radio buttons.
+             * @param {Event} event The change event object.
+             */
+            function handleRadioChange(event) {
+                // Update the appState.selections based on the changed radio group
+                const radioName = event.target.name;
+                const optionId = event.target.getAttribute('data-option-id') || event.target.id; // For size radios, use ID
+
+                if (radioName === 'laptop_size_radio') {
+                    appState.selections.size = optionId;
+                } else if (radioName === 'processor_radio') {
+                    appState.selections.cpu = optionId;
+                } else if (radioName === 'ram_radio') {
+                    appState.selections.ram = optionId;
+                } else if (radioName === 'ssd_radio') {
+                    appState.selections.ssd = optionId;
+                } else if (radioName === 'windows_radio') {
+                    appState.selections.windows = optionId;
+                } else if (radioName === 'office_radio') {
+                    appState.selections.office = optionId;
+                }
+
+                // Trigger dependency handling or just price calculation
+                if (radioName === 'laptop_size_radio' || radioName === 'processor_radio') {
+                    handleComponentDependencies();
+                } else {
+                    calculateTotalPrice();
+                }
+            }
+
+            /**
+             * Sets up event listeners for all configuration radio buttons.
+             */
+            function setupEventListeners() {
+                // Combine all relevant radio groups for event listening
+                const allConfigRadios = [
+                    ...DOM.laptopSizeRadios,
+                    ...DOM.processorRadios, // This will be updated dynamically so needs re-query or setup after CPU creation
+                    ...DOM.ramRadios,
+                    ...DOM.ssdRadios,
+                    ...DOM.windowsRadios,
+                    ...DOM.officeRadios
+                ];
+
+                allConfigRadios.forEach(radio => {
+                    // Remove existing listener to prevent duplicates if called multiple times (e.g., in re-initialization)
+                    radio.removeEventListener('change', handleRadioChange);
+                    radio.addEventListener('change', handleRadioChange);
+                });
+            }
+
+            // --- ส่วนที่ 6: การเริ่มต้นเพจ (Initialization) ---
+
+            /**
+             * The main function to initialize the page.
+             * Handles data fetching, UI updates, and event listeners.
+             */
+            async function initializePage() {
+                DOM.loadingMessage.style.display = 'block'; // Show loading message
+                DOM.mainContainer.style.opacity = '0.5'; // Dim main content
+
+                const sheetCheckResult = await checkSheetAccessibility(GOOGLE_SHEET_CSV_URL);
+
+                if (!sheetCheckResult.success) {
+                    DOM.loadingMessage.style.display = 'none';
+                    DOM.errorMessage.style.display = 'block'; // Show error message
+                    DOM.mainContainer.style.display = 'none'; // Hide main content
+
+                    // Set specific error message based on type
+                    DOM.errorCheckSpecificReason.textContent = sheetCheckResult.message || 'An unknown error occurred during data retrieval.';
+                    console.error("Critical Error during initialization:", sheetCheckResult.message);
+                    return; // Stop initialization
+                }
+
+                try {
+                    await populateConfigData(); // Fetch and parse data, create dynamic CPU radios, populate page text
+                    sortCpuOptions(); // Sort CPU options by price
+
+                    // Set initial default selections based on appState defaults and ensure they are checked in UI
+                    const defaultSizeRadio = document.getElementById(appState.selections.size);
+                    if (defaultSizeRadio) {
+                        defaultSizeRadio.checked = true;
+                    }
+                    // For CPU, RAM, SSD, Windows, Office: Ensure initial selections are valid and checked
+                    // This is handled by handleComponentDependencies which will select the first available if default is not.
+
+                    setupEventListeners(); // Setup listeners for all radios, including newly created CPUs
+                    handleComponentDependencies(); // Run initial dependency logic and price calculation
+
+                    DOM.loadingMessage.style.display = 'none'; // Hide loading message
+                    DOM.mainContainer.style.opacity = '1'; // Restore full opacity
+                } catch (error) {
+                    console.error('Failed to initialize page:', error);
+                    DOM.loadingMessage.style.display = 'none';
+                    DOM.errorMessage.style.display = 'block'; // Show general error message
+                    DOM.mainContainer.style.display = 'none'; // Hide main content
+                    DOM.errorCheckSpecificReason.textContent = error.message || 'An unexpected error occurred during page setup.';
+                }
+            }
+
+            // Call the initialization function when the DOM is fully loaded
+            document.addEventListener('DOMContentLoaded', initializePage);
+
+            /*
+            --- แนวทางการปรับปรุงประสิทธิภาพ (Performance Optimizations) เพิ่มเติม ---
+
+            ในโค้ดฝั่ง Client-side (HTML/CSS/JS) ที่คุณเห็นอยู่นี้ มีการเขียนโค้ดที่ค่อนข้างมีประสิทธิภาพอยู่แล้ว
+            เช่น:
+            -   การใช้ DOM API อย่างมีประสิทธิภาพ (ไม่ Query DOM ซ้ำซ้อน)
+            -   การใช้ `async/await` สำหรับการดึงข้อมูลเพื่อไม่ให้ UI ค้าง
+            -   การเปลี่ยนรูปภาพแบบ `fade-out/fade-in` ที่ช่วยให้การเปลี่ยนภาพดูนุ่มนวล
+
+            อย่างไรก็ตาม หากต้องการปรับปรุงประสิทธิภาพสำหรับ Production (การใช้งานจริง) ให้ดียิ่งขึ้นไปอีก
+            มักจะเกี่ยวข้องกับ "Build Process" (กระบวนการก่อนนำโค้ดไปใช้งานจริง) และ "Server Configuration" (การตั้งค่าเซิร์ฟเวอร์):
+
+            1.  **การย่อขนาดไฟล์ (Minification):**
+                * คือการลบช่องว่าง, คอมเมนต์, และย่อชื่อตัวแปร/ฟังก์ชันให้สั้นที่สุดในไฟล์ JavaScript และ CSS
+                * **วิธีทำ:** ต้องใช้เครื่องมือ Build Tools เช่น `Webpack`, `Rollup`, `Vite` หรือ `Terser` (สำหรับ JS) และ `CSSNano` (สำหรับ CSS) ซึ่งจะทำในขั้นตอนการ "Build" โปรเจกต์ของคุณออกมาเป็นเวอร์ชันสำหรับ Production
+                * **ข้อดี:** ลดขนาดไฟล์ ทำให้เบราว์เซอร์ดาวน์โหลดได้เร็วขึ้น
+
+            2.  **การบีบอัด (Compression):**
+                * คือการใช้เทคนิคการบีบอัดข้อมูล เช่น Gzip หรือ Brotli บน Server-side
+                * **วิธีทำ:** ตั้งค่าบน Web Server ของคุณ (เช่น Apache, Nginx, Node.js Express server) ให้บีบอัดไฟล์ HTML, CSS, JavaScript, รูปภาพ ก่อนส่งไปยัง Browser ของผู้ใช้
+                * **ข้อดี:** ลดปริมาณข้อมูลที่ส่งผ่านเครือข่าย ทำให้เว็บโหลดเร็วขึ้น
+
+            3.  **Lazy Loading รูปภาพ (สำหรับหลายๆ รูปภาพ):**
+                * **ตอนนี้:** มีรูปภาพเดียวที่เปลี่ยนไปมา
+                * **วิธีทำ:** หากในอนาคตคุณมีรูปภาพหลายสิบรูป หรือมี Gallery รูปภาพในหน้าเว็บ ควรใช้คุณสมบัติ `loading="lazy"` ในแท็ก `<img>` หรือใช้ JavaScript เพื่อโหลดรูปภาพเมื่อรูปภาพนั้นอยู่ใน Viewport ของผู้ใช้เท่านั้น
+                * **ข้อดี:** ลดเวลาการโหลดเริ่มต้นของหน้าเว็บ เพราะไม่ต้องโหลดรูปภาพทั้งหมดตั้งแต่แรก
+            
+            4.  **การใช้ HTTP Caching Headers:**
+                * **วิธีทำ:** กำหนดค่า `Cache-Control` บน Server-side เพื่อบอกให้ Browser เก็บไฟล์ (HTML, CSS, JS, รูปภาพ) ไว้ใน Cache ชั่วคราว เมื่อผู้ใช้กลับมาที่เว็บอีกครั้ง จะโหลดได้เร็วขึ้นมาก
+                * **ข้อดี:** ปรับปรุงประสบการณ์ผู้ใช้ในการเข้าชมซ้ำ
+
+            5.  **การรวมไฟล์ (Bundling) และ Code Splitting:**
+                * **วิธีทำ:** หากโค้ด JavaScript มีขนาดใหญ่มาก หรือแยกเป็นหลาย Modules (ตามที่แนะนำในข้อ 4) Build Tools สามารถรวมไฟล์เหล่านั้นเข้าด้วยกันเป็นไฟล์ Bundle เดียว หรือแบ่งเป็นไฟล์ย่อยๆ (Code Splitting) ที่โหลดเมื่อจำเป็นเท่านั้น
+                * **ข้อดี:** ลดจำนวน HTTP Requests และปรับปรุงการโหลดแบบ On-demand
+
+            สำหรับโปรเจกต์ขนาดเล็กที่อยู่ในไฟล์เดียว การปรับปรุงประสิทธิภาพส่วนใหญ่จะอยู่ในด้านการเขียนโค้ดที่สะอาดและมี Logic ที่ดีอยู่แล้ว (ซึ่งเราได้ทำไปแล้ว) แต่หากโปรเจกต์เติบโตขึ้น การพิจารณาใช้ Build Tools และการปรับแต่ง Server จะเป็นสิ่งสำคัญครับ
+            */
+
+        })(); // ปิด IIFE
+    </script>
+</body>
+</html>
