@@ -113,12 +113,7 @@
             <!-- Selected laptop models will be displayed here -->
         </div>
 
-        <!-- Global toggle for display details -->
-        <div class="flex justify-center mb-6">
-            <button id="global-toggle-display-details" class="py-2 px-4 rounded-lg bg-blue-500 text-white font-bold shadow-md hover:bg-blue-600 transition-colors duration-200">
-                ดูรายละเอียดจอภาพเพิ่มเติม
-            </button>
-        </div>
+        <!-- Removed the global toggle button from here -->
 
         <!-- Container for the laptop cards -->
         <div id="laptop-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -171,7 +166,7 @@
         const sortOrderBtn = document.getElementById('sort-order-btn');
         const sortIconUp = document.getElementById('sort-icon-up');
         const sortIconDown = document.getElementById('sort-icon-down');
-        const globalToggleDisplayDetailsBtn = document.getElementById('global-toggle-display-details');
+        // Removed globalToggleDisplayDetailsBtn as it's no longer global
 
         // =================================================================
         // ส่วนที่ 2: ฟังก์ชันสำหรับประมวลผลข้อมูล
@@ -609,6 +604,11 @@
                                     <p class="text-xs text-gray-500">เล่นเกม</p>
                                     ${createSegmentedRatingBar(displayGamingRating, 'displayGaming')}
                                     
+                                    <!-- The toggle button is now inside each card, but will trigger global toggle -->
+                                    <a href="#" class="text-blue-600 hover:text-blue-800 underline text-xs font-bold mt-2 card-display-toggle-btn">
+                                        ดูรายละเอียดจอภาพเพิ่มเติม
+                                    </a>
+
                                     <div class="detailed-display-section hidden space-y-1 pt-2">
                                         <div class="flex items-center justify-between text-xs text-gray-500">
                                             <span>ชนิดจอ:</span>
@@ -647,7 +647,12 @@
                         </div>
                     </div>
                 `;
-                laptopCardsContainer.innerHTML += cardHtml;
+                
+                const cardDiv = document.createElement('div');
+                cardDiv.innerHTML = cardHtml;
+                const currentCard = cardDiv.firstElementChild; 
+
+                laptopCardsContainer.appendChild(currentCard); 
             });
 
             // Attach click event listeners to all spec sections after they are rendered
@@ -732,16 +737,18 @@
             }
         };
 
-        // Event listener for the new global toggle button
-        globalToggleDisplayDetailsBtn.addEventListener('click', () => {
+        /**
+         * Toggles the visibility of detailed display sections across all cards.
+         */
+        const toggleAllDisplayDetails = () => {
             const detailedSections = document.querySelectorAll('.detailed-display-section');
+            const toggleButtons = document.querySelectorAll('.card-display-toggle-btn');
+            
             let allHidden = true;
-            // Check if all are hidden
-            detailedSections.forEach(section => {
-                if (!section.classList.contains('hidden')) {
-                    allHidden = false;
-                }
-            });
+            // Check if all are hidden (or if there are no sections, assume hidden)
+            if (detailedSections.length > 0) {
+                allHidden = Array.from(detailedSections).every(section => section.classList.contains('hidden'));
+            }
 
             detailedSections.forEach(section => {
                 if (allHidden) {
@@ -751,10 +758,21 @@
                 }
             });
 
-            if (allHidden) {
-                globalToggleDisplayDetailsBtn.textContent = 'ซ่อนรายละเอียดจอภาพ';
-            } else {
-                globalToggleDisplayDetailsBtn.textContent = 'ดูรายละเอียดจอภาพเพิ่มเติม';
+            toggleButtons.forEach(button => {
+                if (allHidden) {
+                    button.textContent = 'ซ่อนรายละเอียดจอภาพ';
+                } else {
+                    button.textContent = 'ดูรายละเอียดจอภาพเพิ่มเติม';
+                }
+            });
+        };
+
+        // Event listener for the global toggle button (now delegated to body)
+        // We attach this to document.body to catch clicks on dynamically added buttons
+        document.body.addEventListener('click', (event) => {
+            if (event.target.classList.contains('card-display-toggle-btn')) {
+                event.preventDefault(); // Prevent default link behavior (e.g., jumping to top)
+                toggleAllDisplayDetails();
             }
         });
 
@@ -804,4 +822,3 @@
 
 </body>
 </html>
-
