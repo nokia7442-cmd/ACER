@@ -94,6 +94,11 @@
             </div>
         </div>
 
+        <!-- Container for selected laptops display -->
+        <div id="selected-laptops-display-container" class="flex flex-wrap justify-center gap-4 mb-8">
+            <!-- Selected laptop models will be displayed here -->
+        </div>
+
         <!-- Sorting controls -->
         <div id="sort-controls" class="flex flex-wrap justify-center gap-2 mb-8">
             <label for="sort-by-select" class="flex items-center text-gray-700 font-bold">เรียงตาม:</label>
@@ -361,7 +366,21 @@
         // =================================================================
         // ส่วนที่ 3: ฟังก์ชันสำหรับเรนเดอร์ UI
         // =================================================================
-
+        
+        /**
+         * Determines the background color for a numerical rating based on its value.
+         * @param {number} rating - The rating value (0-5).
+         * @returns {string} - The hex color string.
+         */
+        const getRatingColor = (rating) => {
+            if (rating >= 5) return '#f472b6'; // pink
+            if (rating >= 4) return '#a855f7'; // purple
+            if (rating >= 3) return '#2986ed'; // blue
+            if (rating >= 2) return '#22c55e'; // green
+            if (rating >= 1) return '#18f918'; // light green
+            return '#4b5563'; // dark grey
+        };
+        
         /**
          * Creates HTML for a segmented rating bar (5 segments) with colors based on the rating range.
          * @param {number} rating - The rating to display.
@@ -390,7 +409,7 @@
                     segmentsHtml += `<div class="h-3 flex-grow rounded-sm bg-gray-200"></div>`;
                 }
             }
-            return `<div class="flex w-full space-x-[2px] mb-2 rating-bar-container" data-rating-type="${type}">${segmentsHtml}</div>`;
+            return `<div class="flex w-full space-x-[2px] rating-bar-container" data-rating-type="${type}">${segmentsHtml}</div>`;
         };
 
         const renderDropdowns = () => {
@@ -546,12 +565,18 @@
                                     <span>การ์ดจอใน CPU:</span>
                                     <span class="font-bold text-gray-700">${laptop.gpu.id}</span>
                                 </div>
-                                ${createSegmentedRatingBar(gpuRating, 'gpuNormal')}
+                                <div class="flex items-center gap-2">
+                                    ${createSegmentedRatingBar(gpuRating, 'gpuNormal')}
+                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(gpuRating)};">${gpuRating.toFixed(1)}</span>
+                                </div>
                                 <div class="flex items-center justify-between text-xs text-gray-500">
                                     <span>การ์ดจอแยก:</span>
                                     <span class="font-bold text-gray-700">${dedicatedGpuId}</span>
                                 </div>
-                                ${createSegmentedRatingBar(dedicatedGpuRating, 'gpuDedicated')}
+                                <div class="flex items-center gap-2">
+                                    ${createSegmentedRatingBar(dedicatedGpuRating, 'gpuDedicated')}
+                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(dedicatedGpuRating)};">${dedicatedGpuRating.toFixed(1)}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -564,7 +589,10 @@
                             </div>
                             <div class="pl-4">
                                 <p class="text-xs text-gray-500">ประสิทธิภาพรวม</p>
-                                ${createSegmentedRatingBar(gpuRating, 'gpuNormal')}
+                                <div class="flex items-center gap-2">
+                                    ${createSegmentedRatingBar(gpuRating, 'gpuNormal')}
+                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(gpuRating)};">${gpuRating.toFixed(1)}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -642,9 +670,15 @@
                                 </div>
                                 <div class="space-y-1 pl-4">
                                     <p class="text-xs text-gray-500">ความเร็ว</p>
-                                    ${createSegmentedRatingBar(cpuRatingSingle, 'cpuSpeed')}
+                                    <div class="flex items-center gap-2">
+                                        ${createSegmentedRatingBar(cpuRatingSingle, 'cpuSpeed')}
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(cpuRatingSingle)};">${cpuRatingSingle.toFixed(1)}</span>
+                                    </div>
                                     <p class="text-xs text-gray-500">ทำงานหลายอย่างพร้อมกัน</p>
-                                    ${createSegmentedRatingBar(cpuRatingMulti, 'cpuMulti')}
+                                    <div class="flex items-center gap-2">
+                                        ${createSegmentedRatingBar(cpuRatingMulti, 'cpuMulti')}
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(cpuRatingMulti)};">${cpuRatingMulti.toFixed(1)}</span>
+                                    </div>
                                 </div>
                             </div>
                             <!-- GPU Section -->
@@ -658,7 +692,10 @@
                                     <span>${laptop.ram.value}</span>
                                 </div>
                                 <div class="pl-4">
-                                    ${createSegmentedRatingBar(laptop.ram.rating, 'ram')}
+                                    <div class="flex items-center gap-2">
+                                        ${createSegmentedRatingBar(laptop.ram.rating, 'ram')}
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(laptop.ram.rating)};">${laptop.ram.rating.toFixed(1)}</span>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Storage Section -->
@@ -668,7 +705,10 @@
                                     <span>${laptop.ssd.value}</span>
                                 </div>
                                 <div class="pl-4">
-                                    ${createSegmentedRatingBar(laptop.ssd.rating, 'ssd')}
+                                    <div class="flex items-center gap-2">
+                                        ${createSegmentedRatingBar(laptop.ssd.rating, 'ssd')}
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(laptop.ssd.rating)};">${laptop.ssd.rating.toFixed(1)}</span>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Display Section -->
@@ -679,9 +719,15 @@
                                 </div>
                                 <div class="space-y-1 pl-4">
                                     <p class="text-xs text-gray-500">ใช้งานทั่วไป</p>
-                                    ${createSegmentedRatingBar(displayRating, 'displayGeneral')}
+                                    <div class="flex items-center gap-2">
+                                        ${createSegmentedRatingBar(displayRating, 'displayGeneral')}
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayRating)};">${displayRating.toFixed(1)}</span>
+                                    </div>
                                     <p class="text-xs text-gray-500">เล่นเกม</p>
-                                    ${createSegmentedRatingBar(displayGamingRating, 'displayGaming')}
+                                    <div class="flex items-center gap-2">
+                                        ${createSegmentedRatingBar(displayGamingRating, 'displayGaming')}
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayGamingRating)};">${displayGamingRating.toFixed(1)}</span>
+                                    </div>
                                     
                                     <div class="w-full h-1 bg-gray-300 my-4"></div>
 
@@ -690,27 +736,42 @@
                                             <span>ชนิดจอ:</span>
                                             <span class="font-bold text-gray-700">${laptop.display.type}</span>
                                         </div>
-                                        ${createSegmentedRatingBar(displayTypeRating, 'displayType')}
+                                        <div class="flex items-center gap-2">
+                                            ${createSegmentedRatingBar(displayTypeRating, 'displayType')}
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayTypeRating)};">${displayTypeRating.toFixed(1)}</span>
+                                        </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>ความละเอียด:</span>
                                             <span class="font-bold text-gray-700">${laptop.display.resolution}</span>
                                         </div>
-                                        ${createSegmentedRatingBar(displayResolutionRating, 'displayResolution')}
+                                        <div class="flex items-center gap-2">
+                                            ${createSegmentedRatingBar(displayResolutionRating, 'displayResolution')}
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayResolutionRating)};">${displayResolutionRating.toFixed(1)}</span>
+                                        </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>Hz:</span>
                                             <span class="font-bold text-gray-700">${laptop.display.hz}</span>
                                         </div>
-                                        ${createSegmentedRatingBar(displayHzRating, 'displayHz')}
+                                        <div class="flex items-center gap-2">
+                                            ${createSegmentedRatingBar(displayHzRating, 'displayHz')}
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayHzRating)};">${displayHzRating.toFixed(1)}</span>
+                                        </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>ความสว่างจอ:</span>
                                             <span class="font-bold text-gray-700">${laptop.display.bright}</span>
                                         </div>
-                                        ${createSegmentedRatingBar(displayBrightRating, 'displayBright')}
+                                        <div class="flex items-center gap-2">
+                                            ${createSegmentedRatingBar(displayBrightRating, 'displayBright')}
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayBrightRating)};">${displayBrightRating.toFixed(1)}</span>
+                                        </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>ขอบเขตสี (sRGB/DCI-P3):</span>
                                             <span class="font-bold text-gray-700">${displayColor}</span>
                                         </div>
-                                        ${createSegmentedRatingBar(displayColorRating, 'displayColor')}
+                                        <div class="flex items-center gap-2">
+                                            ${createSegmentedRatingBar(displayColorRating, 'displayColor')}
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayColorRating)};">${displayColorRating.toFixed(1)}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -848,7 +909,6 @@
             const series = e.target.value;
             localStorage.setItem('selectedSeries', series);
             renderModelButtons(brandSelect.value, series);
-            renderSelectedLaptopsDisplay();
             renderLaptopCards();
             clearGlobalHighlight();
         });
