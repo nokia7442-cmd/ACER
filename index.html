@@ -567,7 +567,7 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     ${createSegmentedRatingBar(gpuRating, 'gpuNormal')}
-                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(gpuRating)};">${gpuRating.toFixed(1)}</span>
+                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(gpuRating)};">${(gpuRating * 20).toFixed(1)}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs text-gray-500">
                                     <span>การ์ดจอแยก:</span>
@@ -575,7 +575,7 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     ${createSegmentedRatingBar(dedicatedGpuRating, 'gpuDedicated')}
-                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(dedicatedGpuRating)};">${dedicatedGpuRating.toFixed(1)}</span>
+                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(dedicatedGpuRating)};">${(dedicatedGpuRating * 20).toFixed(1)}</span>
                                 </div>
                             </div>
                         </div>
@@ -591,7 +591,7 @@
                                 <p class="text-xs text-gray-500">ประสิทธิภาพรวม</p>
                                 <div class="flex items-center gap-2">
                                     ${createSegmentedRatingBar(gpuRating, 'gpuNormal')}
-                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(gpuRating)};">${gpuRating.toFixed(1)}</span>
+                                    <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(gpuRating)};">${(gpuRating * 20).toFixed(1)}</span>
                                 </div>
                             </div>
                         </div>
@@ -672,12 +672,12 @@
                                     <p class="text-xs text-gray-500">ความเร็ว</p>
                                     <div class="flex items-center gap-2">
                                         ${createSegmentedRatingBar(cpuRatingSingle, 'cpuSpeed')}
-                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(cpuRatingSingle)};">${cpuRatingSingle.toFixed(1)}</span>
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(cpuRatingSingle)};">${(cpuRatingSingle * 20).toFixed(1)}</span>
                                     </div>
                                     <p class="text-xs text-gray-500">ทำงานหลายอย่างพร้อมกัน</p>
                                     <div class="flex items-center gap-2">
                                         ${createSegmentedRatingBar(cpuRatingMulti, 'cpuMulti')}
-                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(cpuRatingMulti)};">${cpuRatingMulti.toFixed(1)}</span>
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(cpuRatingMulti)};">${(cpuRatingMulti * 20).toFixed(1)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -694,7 +694,7 @@
                                 <div class="pl-4">
                                     <div class="flex items-center gap-2">
                                         ${createSegmentedRatingBar(laptop.ram.rating, 'ram')}
-                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(laptop.ram.rating)};">${laptop.ram.rating.toFixed(1)}</span>
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(laptop.ram.rating)};">${(laptop.ram.rating * 20).toFixed(1)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -707,7 +707,7 @@
                                 <div class="pl-4">
                                     <div class="flex items-center gap-2">
                                         ${createSegmentedRatingBar(laptop.ssd.rating, 'ssd')}
-                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(laptop.ssd.rating)};">${laptop.ssd.rating.toFixed(1)}</span>
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(laptop.ssd.rating)};">${(laptop.ssd.rating * 20).toFixed(1)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -721,12 +721,12 @@
                                     <p class="text-xs text-gray-500">ใช้งานทั่วไป</p>
                                     <div class="flex items-center gap-2">
                                         ${createSegmentedRatingBar(displayRating, 'displayGeneral')}
-                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayRating)};">${displayRating.toFixed(1)}</span>
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayRating)};">${(displayRating * 20).toFixed(1)}</span>
                                     </div>
                                     <p class="text-xs text-gray-500">เล่นเกม</p>
                                     <div class="flex items-center gap-2">
                                         ${createSegmentedRatingBar(displayGamingRating, 'displayGaming')}
-                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayGamingRating)};">${displayGamingRating.toFixed(1)}</span>
+                                        <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayGamingRating)};">${(displayGamingRating * 20).toFixed(1)}</span>
                                     </div>
                                     
                                     <div class="w-full h-1 bg-gray-300 my-4"></div>
@@ -738,7 +738,7 @@
                                         </div>
                                         <div class="flex items-center gap-2">
                                             ${createSegmentedRatingBar(displayTypeRating, 'displayType')}
-                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayTypeRating)};">${displayTypeRating.toFixed(1)}</span>
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayTypeRating)};">${(displayTypeRating * 20).toFixed(1)}</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>ความละเอียด:</span>
@@ -746,7 +746,7 @@
                                         </div>
                                         <div class="flex items-center gap-2">
                                             ${createSegmentedRatingBar(displayResolutionRating, 'displayResolution')}
-                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayResolutionRating)};">${displayResolutionRating.toFixed(1)}</span>
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayResolutionRating)};">${(displayResolutionRating * 20).toFixed(1)}</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>Hz:</span>
@@ -754,7 +754,7 @@
                                         </div>
                                         <div class="flex items-center gap-2">
                                             ${createSegmentedRatingBar(displayHzRating, 'displayHz')}
-                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayHzRating)};">${displayHzRating.toFixed(1)}</span>
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayHzRating)};">${(displayHzRating * 20).toFixed(1)}</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>ความสว่างจอ:</span>
@@ -762,7 +762,7 @@
                                         </div>
                                         <div class="flex items-center gap-2">
                                             ${createSegmentedRatingBar(displayBrightRating, 'displayBright')}
-                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayBrightRating)};">${displayBrightRating.toFixed(1)}</span>
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayBrightRating)};">${(displayBrightRating * 20).toFixed(1)}</span>
                                         </div>
                                         <div class="flex items-center justify-between text-xs">
                                             <span>ขอบเขตสี (sRGB/DCI-P3):</span>
@@ -770,7 +770,7 @@
                                         </div>
                                         <div class="flex items-center gap-2">
                                             ${createSegmentedRatingBar(displayColorRating, 'displayColor')}
-                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayColorRating)};">${displayColorRating.toFixed(1)}</span>
+                                            <span class="px-2 py-1 text-white rounded-md text-xs font-bold" style="background-color: ${getRatingColor(displayColorRating)};">${(displayColorRating * 20).toFixed(1)}</span>
                                         </div>
                                     </div>
                                 </div>
