@@ -11,41 +11,35 @@
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
             color: #374151;
-            font-size: 1.125rem; /* เพิ่มขนาดตัวอักษรพื้นฐาน */
+            font-size: 1.125rem;
         }
         /* Custom styles for the dropdowns to match the design */
         select, button {
             transition: all 0.2s ease-in-out;
         }
 
-        /* CSS สำหรับการไฮไลท์และทำให้ส่วนอื่นมืดลง */
-        .rating-bar-container {
-            transition: opacity 0.15s ease-in-out;
-            border-radius: 0.25rem; /* rounded-sm */
-        }
-
         /* New class for the main spec sections to apply highlight/dimming */
         .spec-section-container {
             transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border 0.15s ease-in-out;
-            border-radius: 0.5rem; /* rounded-lg, adjust as needed */
-            border: 4px solid transparent; /* Default transparent border for the section */
-            padding: 0.5rem; /* Add some padding so the border doesn't clip content */
-            margin: -0.5rem; /* Counteract padding to maintain layout */
-            cursor: pointer; /* แสดงว่าสามารถคลิกได้ที่กรอบ */
+            border-radius: 0.5rem;
+            border: 4px solid transparent; /* Default transparent border */
+            padding: 0.5rem;
+            margin: -0.5rem;
+            cursor: pointer;
         }
 
         /* When global dimming is active, dim non-highlighted spec sections */
         body.global-dim-active .spec-section-container:not(.highlight-active) {
             opacity: 0.2;
-            transform: scale(0.98); /* Slightly scale down the dimmed sections */
+            transform: scale(0.98);
         }
 
         /* Highlighted spec section */
         body.global-dim-active .spec-section-container.highlight-active {
             opacity: 1;
-            transform: scale(1.0); /* No scaling for highlighted section */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Stronger shadow */
-            border: 4px solid white; /* Thick white border for the entire section */
+            transform: scale(1.0);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 4px solid #3b82f6; /* Use a blue border for highlighting */
         }
         
         /* New class for dimming an entire section and its children */
@@ -53,10 +47,9 @@
             opacity: 0.4;
         }
 
-
         /* Adjusted padding for the main laptop card to reduce height */
         .laptop-card-main {
-            padding: 1rem; /* Reduced from p-6 (24px) to p-4 (16px) or p-3 (12px) for 10% reduction */
+            padding: 1rem;
             transition: opacity 0.3s ease-in-out, blur 0.3s ease-in-out;
         }
 
@@ -111,7 +104,6 @@
                 <option value="gpuRating">การ์ดจอ</option>
             </select>
             <button id="sort-order-btn" class="p-2 rounded-lg border-2 border-gray-300 bg-white text-gray-700 font-bold shadow-sm hover:bg-gray-100 transition-colors duration-200">
-                <!-- SVG icon for sort order will be here -->
                 <svg id="sort-icon-up" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
                 </svg>
@@ -119,7 +111,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <!-- Checkbox for showing differences only, added as requested -->
             <div class="flex items-center space-x-2 ml-4">
                 <label for="show-diff-checkbox" class="text-gray-700 font-bold">แสดงเฉพาะจุดที่แตกต่าง</label>
                 <input type="checkbox" id="show-diff-checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded-md focus:ring-indigo-500 cursor-pointer" />
@@ -155,29 +146,24 @@
         // =================================================================
         // ส่วนที่ 1: การตั้งค่าและตัวแปรหลัก
         // =================================================================
-        // URL for fetching data from the Google Sheet in CSV format.
         const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTMANBtr1zMXdrfz75Pfa7YkWOF97IhfgWFRz9KE4WoZOX0dQXVt6t7VPfjxjFbkH3SSb451ZfmuYR/pub?gid=754160478&single=true&output=csv";
 
-        // Variables for application state.
         let allLaptops = [];
         let dropdownData = {};
         let selectedModels = [];
         const workload = 'normal';
         let sortCriteria = 'price';
         let sortOrder = 'asc';
-        let currentHighlightedSpecType = null; // Global state for clicked spec type
-        let showDifferencesOnly = false; // New state variable for the checkbox
-        let isDisplayDetailsShown = false; // New state variable for the display toggle
+        let currentHighlightedSpecType = null;
+        let showDifferencesOnly = false;
+        let isDisplayDetailsShown = false; // สถานะการแสดงข้อมูล Display แบบละเอียด
 
-        // Store logo information
         const storeLogos = {
             jib: 'https://www.jib.co.th/web/images/logo/logo-b.png',
             advice: 'https://notebookspec.com/web/wp-content/uploads/2020/02/logo-color.png',
             bananait: 'https://images.seeklogo.com/logo-png/16/1/banana-it-logo-png_seeklogo-168840.png',
-            // Our Store was here
         };
 
-        // References to various elements on the page.
         const appContainer = document.getElementById('app-container');
         const loadingMessage = document.getElementById('loading-message');
         const errorMessage = document.getElementById('error-message');
@@ -192,36 +178,20 @@
         const sortOrderBtn = document.getElementById('sort-order-btn');
         const sortIconUp = document.getElementById('sort-icon-up');
         const sortIconDown = document.getElementById('sort-icon-down');
-        // New reference to the difference checkbox
         const showDiffCheckbox = document.getElementById('show-diff-checkbox');
-        // Removed globalToggleDisplayDetailsBtn as it's no longer global
 
         // =================================================================
         // ส่วนที่ 2: ฟังก์ชันสำหรับประมวลผลข้อมูล
         // =================================================================
-
-        /**
-         * Parses a string value, cleans it, and returns a floating-point number.
-         * Returns 0 if the value is not a valid number.
-         * @param {string} value - The raw string value from the CSV.
-         * @returns {number} - The parsed and sanitized number.
-         */
         const parseAndSanitizePrice = (value) => {
-            // Handle null, undefined, or empty string values
             if (value === null || value === undefined || value.trim() === '') {
                 return 0;
             }
-            // Remove non-numeric characters except for the decimal point
             const cleanedValue = value.replace(/[^0-9.]/g, '');
             const price = parseFloat(cleanedValue);
             return isNaN(price) ? 0 : price;
         };
         
-        /**
-         * Parses CSV text into an array of laptop objects.
-         * @param {string} csvText - The raw CSV text from Google Sheets.
-         * @returns {Array} - An array of laptop objects.
-         */
         const parseCSV = (csvText) => {
             const lines = csvText.trim().split('\n');
             if (lines.length <= 1) {
@@ -234,6 +204,12 @@
             const headerMap = new Map();
             headers.forEach((header, index) => headerMap.set(header, index));
 
+            const getCellValue = (header, row) => {
+                const index = headerMap.get(header);
+                if (index === undefined || row[index] === undefined) return '';
+                return String(row[index]).trim();
+            };
+
             const laptops = data.map(rowText => {
                 const row = rowText.split(',').map(cell => cell.trim());
                 if (row.length !== headers.length) {
@@ -241,81 +217,69 @@
                     return null;
                 }
                 
-                // Helper function is now defined inside the map loop to access 'row'
-                const getCellValue = (header) => {
-                    const index = headerMap.get(header);
-                    if (index === undefined || row[index] === undefined) return '';
-                    return String(row[index]).trim();
-                };
-
                 const laptop = {
-                    brand_id: getCellValue('brand_id') || 'Unknown',
-                    series_id: getCellValue('series_id') || 'Unknown',
-                    model_id: getCellValue('Laptop_id') || 'Unknown',
+                    brand_id: getCellValue('brand_id', row) || 'Unknown',
+                    series_id: getCellValue('series_id', row) || 'Unknown',
+                    model_id: getCellValue('Laptop_id', row) || 'Unknown',
                     prices: {
-                        // Use the new helper function to parse all prices
-                        base: parseAndSanitizePrice(getCellValue('base_price')),
-                        pro: parseAndSanitizePrice(getCellValue('pro_price')),
-                        cash: parseAndSanitizePrice(getCellValue('cash_price')),
+                        base: parseAndSanitizePrice(getCellValue('base_price', row)),
+                        pro: parseAndSanitizePrice(getCellValue('pro_price', row)),
+                        cash: parseAndSanitizePrice(getCellValue('cash_price', row)),
                     },
-                    isDisabled: getCellValue('is_disabled').toUpperCase() === 'TRUE',
-                    disabledReason: getCellValue('disabled_reason') || 'สินค้าไม่พร้อมจำหน่าย',
+                    isDisabled: getCellValue('is_disabled', row).toUpperCase() === 'TRUE',
+                    disabledReason: getCellValue('disabled_reason', row) || 'สินค้าไม่พร้อมจำหน่าย',
                     cpu: {
-                        id: getCellValue('cpu_id') || 'N/A',
-                        architecture: getCellValue('cpu_architecture') || 'N/A',
-                        releaseYear: getCellValue('release_year') || 'N/A',
+                        id: getCellValue('cpu_id', row) || 'N/A',
+                        architecture: getCellValue('cpu_architecture', row) || 'N/A',
+                        releaseYear: getCellValue('release_year', row) || 'N/A',
                         ratings: {
-                            singleNormal: parseFloat(getCellValue('cpu_rating_single_normal')) || 0,
-                            singleHeavy: parseFloat(getCellValue('cpu_rating_single_heavy')) || 0,
-                            multiNormal: parseFloat(getCellValue('cpu_rating_multi_normal')) || 0,
-                            multiHeavy: parseFloat(getCellValue('cpu_rating_multi_heavy')) || 0,
+                            singleNormal: parseFloat(getCellValue('cpu_rating_single_normal', row)) || 0,
+                            singleHeavy: parseFloat(getCellValue('cpu_rating_single_heavy', row)) || 0,
+                            multiNormal: parseFloat(getCellValue('cpu_rating_multi_normal', row)) || 0,
+                            multiHeavy: parseFloat(getCellValue('cpu_rating_multi_heavy', row)) || 0,
                         },
                     },
                     gpu: {
-                        id: getCellValue('gpu') || 'N/A',
+                        id: getCellValue('gpu', row) || 'N/A',
                         ratings: {
-                            normal: parseFloat(getCellValue('gpu_rating_normal')) || 0,
-                            heavy: parseFloat(getCellValue('gpu_rating_heavy')) || 0,
+                            normal: parseFloat(getCellValue('gpu_rating_normal', row)) || 0,
+                            heavy: parseFloat(getCellValue('gpu_rating_heavy', row)) || 0,
                         },
-                        dedicatedGpuId: getCellValue('gpu_2') || 'N/A',
-                        dedicatedGpuRating: parseFloat(getCellValue('gpu_2_rating')) || 0,
+                        dedicatedGpuId: getCellValue('gpu_2', row) || 'N/A',
+                        dedicatedGpuRating: parseFloat(getCellValue('gpu_2_rating', row)) || 0,
                     },
                     ram: {
-                        value: getCellValue('RAM') || 'N/A',
-                        rating: parseFloat(getCellValue('ram_rating')) || 0,
+                        value: getCellValue('RAM', row) || 'N/A',
+                        rating: parseFloat(getCellValue('ram_rating', row)) || 0,
                     },
                     ssd: {
-                        value: getCellValue('SSD') || 'N/A',
-                        rating: parseFloat(getCellValue('ssd_rating')) || 0,
+                        value: getCellValue('SSD', row) || 'N/A',
+                        rating: parseFloat(getCellValue('ssd_rating', row)) || 0,
                     },
                     display: {
-                        id: getCellValue('display_id') || 'N/A',
-                        rating: parseFloat(getCellValue('display_rating')) || 0,
-                        type: getCellValue('display_type') || 'N/A',
-                        typeRating: parseFloat(getCellValue('display_type_rating')) || 0,
-                        hz: getCellValue('display_hz') || 'N/A',
-                        hzRating: parseFloat(getCellValue('display_hz_rating')) || 0,
-                        resolution: getCellValue('display_resoulution') || 'N/A',
-                        resolutionRating: parseFloat(getCellValue('display_resoulution_rating')) || 0,
-                        bright: getCellValue('display_bright') || 'N/A',
-                        brightRating: parseFloat(getCellValue('display_bright_rating')) || 0,
-                        color: getCellValue('display_colour') || 'N/A',
-                        colorRating: parseFloat(getCellValue('display_colour_rating')) || 0,
-                        gamingRating: parseFloat(getCellValue('display_rating2')) || 0, // New gaming rating
+                        id: getCellValue('display_id', row) || 'N/A',
+                        rating: parseFloat(getCellValue('display_rating', row)) || 0,
+                        type: getCellValue('display_type', row) || 'N/A',
+                        typeRating: parseFloat(getCellValue('display_type_rating', row)) || 0,
+                        hz: getCellValue('display_hz', row) || 'N/A',
+                        hzRating: parseFloat(getCellValue('display_hz_rating', row)) || 0,
+                        resolution: getCellValue('display_resoulution', row) || 'N/A',
+                        resolutionRating: parseFloat(getCellValue('display_resoulution_rating', row)) || 0,
+                        bright: getCellValue('display_bright', row) || 'N/A',
+                        brightRating: parseFloat(getCellValue('display_bright_rating', row)) || 0,
+                        color: getCellValue('display_colour', row) || 'N/A',
+                        colorRating: parseFloat(getCellValue('display_colour_rating', row)) || 0,
+                        gamingRating: parseFloat(getCellValue('display_rating2', row)) || 0,
                     },
-                    // Add new fields for store-specific prices and use the new helper function
                     storePrices: {
-                        // Corrected field name from 'pro_price_JIB' to 'pro_price_jib'
-                        jib: parseAndSanitizePrice(getCellValue('pro_price_jib')),
-                        advice: parseAndSanitizePrice(getCellValue('pro_price_advice')),
-                        bananait: parseAndSanitizePrice(getCellValue('pro_price_bananait')),
+                        jib: parseAndSanitizePrice(getCellValue('pro_price_jib', row)),
+                        advice: parseAndSanitizePrice(getCellValue('pro_price_advice', row)),
+                        bananait: parseAndSanitizePrice(getCellValue('pro_price_bananait', row)),
                     },
-                    // เพิ่ม links สำหรับร้านค้า
                     storeLinks: {
-                        // Corrected field name from 'pro_price_JIB_link' to 'pro_price_jib_link'
-                        jib: getCellValue('pro_price_jib_link'),
-                        advice: getCellValue('pro_price_advice_link'),
-                        bananait: getCellValue('pro_price_bananait_link'),
+                        jib: getCellValue('pro_price_jib_link', row),
+                        advice: getCellValue('pro_price_advice_link', row),
+                        bananait: getCellValue('pro_price_bananait_link', row),
                     }
                 };
 
@@ -323,18 +287,12 @@
                 return laptop;
             }).filter(laptop => laptop !== null && laptop.model_id !== 'Unknown');
 
-            // Filter out specific models as requested by the user.
             return laptops.filter(laptop =>
                 laptop.fullName.toLowerCase() !== 'acer aspire lite 15' &&
                 laptop.fullName.toLowerCase() !== 'acer aspire lite 16'
             );
         };
         
-        /**
-         * Identifies which properties are common across all selected laptops.
-         * @param {Array} laptops - The array of selected laptop objects.
-         * @returns {Object} - An object containing Sets of common properties for each category.
-         */
         const getCommonProperties = (laptops) => {
             const commonProps = {
                 cpu: new Set(['id', 'architecture', 'releaseYear']),
@@ -352,7 +310,6 @@
                 const firstLaptop = laptops[0];
                 const propsToRemove = [];
                 for (const prop of commonProps[category]) {
-                    // Check if any other laptop has a different value for this property
                     if (laptops.some(laptop => laptop[category][prop] !== firstLaptop[category][prop])) {
                         propsToRemove.push(prop);
                     }
@@ -363,9 +320,6 @@
         };
 
 
-        /**
-         * Fetches data from Google Sheets and initializes the app.
-         */
         const fetchData = async () => {
             try {
                 loadingMessage.classList.remove('hidden');
@@ -381,7 +335,6 @@
                     throw new Error('No valid data found in the Google Sheet.');
                 }
 
-                // Build data structure for dropdowns.
                 dropdownData = allLaptops.reduce((acc, laptop) => {
                     const { brand_id, series_id, fullName } = laptop;
                     if (!acc[brand_id]) acc[brand_id] = {};
@@ -396,7 +349,7 @@
                 appContainer.classList.remove('hidden');
                 renderDropdowns();
                 renderLaptopCards();
-                renderSelectedLaptopsDisplay(); // Render selected models on initial load
+                renderSelectedLaptopsDisplay();
             } catch (e) {
                 console.error('Error fetching or processing data:', e);
                 loadingMessage.classList.add('hidden');
@@ -417,38 +370,29 @@
          */
         const createSegmentedRatingBar = (rating, type) => {
             const maxSegments = 5;
-            // Cap the rating at the maximum number of segments.
             const cappedRating = Math.min(rating, maxSegments);
             let segmentsHtml = '';
-
-            // Define colors for each segment based on the user's request.
-            const segmentColors = ['#22c55e', '#22c55e', '#3b82f6', '#a855f7', '#f472b6']; // Green, Green, Blue, Purple, Fuchsia
-            const emptyColor = '#e5e7eb'; // Default grey for empty segments
+            
+            // Updated segment colors based on user request
+            const segmentColors = ['#18f918', '#22c55e', '#2986ed', '#a855f7', '#f472b6'];
+            const emptyColor = '#e5e7eb';
 
             for (let i = 0; i < maxSegments; i++) {
-                // Determine the threshold for the current segment (e.g., segment 0 is for rating 0-1)
                 const segmentThreshold = i + 1;
                 const segmentColor = segmentColors[i];
 
                 if (cappedRating > segmentThreshold) {
-                    // Full segment
                     segmentsHtml += `<div class="h-3 flex-grow rounded-sm" style="background-color: ${segmentColor};"></div>`;
                 } else if (cappedRating > i) {
-                    // Partial segment
                     const partialFillPercentage = (cappedRating - i) * 100;
                     segmentsHtml += `<div class="h-3 flex-grow rounded-sm" style="background: linear-gradient(to right, ${segmentColor} ${partialFillPercentage}%, ${emptyColor} ${partialFillPercentage}%); background-size: 100% 100%; background-repeat: no-repeat;"></div>`;
                 } else {
-                    // Empty segment
                     segmentsHtml += `<div class="h-3 flex-grow rounded-sm bg-gray-200"></div>`;
                 }
             }
-            // Add data-rating-type and rating-bar-container class for event delegation
             return `<div class="flex w-full space-x-[2px] mb-2 rating-bar-container" data-rating-type="${type}">${segmentsHtml}</div>`;
         };
 
-        /**
-         * Creates and displays the brand and series dropdowns.
-         */
         const renderDropdowns = () => {
             brandSelect.innerHTML = '<option value="">-- เลือกแบรนด์ --</option>';
             seriesSelect.innerHTML = '<option value="">-- เลือกซีรีส์ --</option>';
@@ -471,10 +415,6 @@
             }
         };
 
-        /**
-         * Creates and displays the series dropdown based on the selected brand.
-         * @param {string} brand - The selected brand.
-         */
         const renderSeriesDropdown = (brand) => {
             seriesSelect.innerHTML = '<option value="">-- เลือกซีรีส์ --</option>';
             if (brand && dropdownData[brand]) {
@@ -490,11 +430,6 @@
             }
         };
 
-        /**
-         * Creates and displays the model selection buttons.
-         * @param {string} brand - The selected brand.
-         * @param {string} series - The selected series.
-         */
         const renderModelButtons = (brand, series) => {
             modelButtonsContainer.innerHTML = '';
             if (brand && series && dropdownData[brand] && dropdownData[brand][series]) {
@@ -517,16 +452,12 @@
             }
         };
 
-        /**
-         * Renders the currently selected laptop models as small cards/buttons.
-         */
         const renderSelectedLaptopsDisplay = () => {
             selectedLaptopsDisplayContainer.innerHTML = '';
             selectedModels.forEach(modelName => {
                 const laptop = allLaptops.find(l => l.fullName === modelName);
                 if (laptop) {
                     const selectedModelDiv = document.createElement('div');
-                    // Add a class to the selected model button for easier targeting for click events
                     selectedModelDiv.className = `flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full shadow-sm selected-model-button`;
                     selectedModelDiv.innerHTML = `
                         <span>${laptop.model_id}</span>
@@ -536,18 +467,14 @@
                     `;
                     selectedModelDiv.querySelector('button').addEventListener('click', (e) => {
                         const modelToRemove = e.currentTarget.dataset.modelName;
-                        handleModelClick(modelToRemove); // Re-use handleModelClick to remove
+                        handleModelClick(modelToRemove);
                     });
-                    // Add click listener to the entire div to clear highlight
                     selectedModelDiv.addEventListener('click', () => clearGlobalHighlight());
                     selectedLaptopsDisplayContainer.appendChild(selectedModelDiv);
                 }
             });
         };
 
-        /**
-         * Creates and displays the selected laptop cards.
-         */
         const renderLaptopCards = () => {
             laptopCardsContainer.innerHTML = '';
             let filteredLaptops = allLaptops.filter(laptop => selectedModels.includes(laptop.fullName));
@@ -560,12 +487,11 @@
                  return;
             }
 
-            // Sort the filtered laptops based on the selected criteria.
             filteredLaptops.sort((a, b) => {
                 let valueA, valueB;
                 if (sortCriteria === 'price') {
-                    valueA = a.prices.pro; // Sort by promo price as requested
-                    valueB = b.prices.pro; // Sort by promo price as requested
+                    valueA = a.prices.pro;
+                    valueB = b.prices.pro;
                 } else if (sortCriteria === 'cpuSpeed') {
                     valueA = a.cpu.ratings.singleNormal;
                     valueB = b.cpu.ratings.singleNormal;
@@ -584,10 +510,8 @@
                 }
             });
 
-            // Get common properties if the checkbox is checked
             const commonProps = showDifferencesOnly ? getCommonProperties(filteredLaptops) : { cpu: new Set(), gpu: new Set(), ram: new Set(), ssd: new Set(), display: new Set() };
             
-            // Generate and append the HTML for each laptop card.
             filteredLaptops.forEach(laptop => {
                 const cpuRatingSingle = laptop.cpu.ratings.singleNormal;
                 const cpuRatingMulti = laptop.cpu.ratings.multiNormal;
@@ -603,7 +527,6 @@
                 const dedicatedGpuId = laptop.gpu.dedicatedGpuId;
                 const dedicatedGpuRating = laptop.gpu.dedicatedGpuRating;
 
-                // ตรวจสอบว่าทั้งส่วนของสเปกนั้น ๆ เหมือนกันหรือไม่
                 const isCpuSectionCommon = commonProps.cpu.has('id') && commonProps.cpu.has('architecture') && commonProps.cpu.has('releaseYear');
                 const isGpuSectionCommon = commonProps.gpu.has('id') && commonProps.gpu.has('dedicatedGpuId');
                 const isRamSectionCommon = commonProps.ram.has('value');
@@ -611,7 +534,6 @@
                 const isDisplaySectionCommon = commonProps.display.has('id') && commonProps.display.has('type') && commonProps.display.has('hz') && commonProps.display.has('resolution') && commonProps.display.has('bright') && commonProps.display.has('color');
                 
                 let gpuSectionHtml = '';
-                // Check if a dedicated GPU exists and display a separate rating bar
                 if (dedicatedGpuId !== 'N/A' && dedicatedGpuRating > 0) {
                     gpuSectionHtml = `
                         <div class="space-y-1">
@@ -634,7 +556,6 @@
                         </div>
                     `;
                 } else {
-                    // If no dedicated GPU, display a single bar for the integrated GPU
                     gpuSectionHtml = `
                         <div class="space-y-1">
                             <div class="flex justify-between items-center text-sm">
@@ -649,10 +570,6 @@
                     `;
                 }
 
-                // =================================================================
-                // ส่วนของราคาโปรโมชั่นของคุณ
-                // มีการเปลี่ยน onclick event เพื่อสลับการแสดงผลราคาเปรียบเทียบจากร้านอื่นทั้งหมด
-                // =================================================================
                 const myPriceHtml = `
                     <div class="p-4 bg-white rounded-xl shadow-lg mb-4 border-2 border-blue-400 price-toggle" onclick="toggleAllComparisonPrices()">
                         <div class="flex items-end">
@@ -663,17 +580,12 @@
                                 ${laptop.prices.base.toLocaleString()} บาท
                             </span>
                         </div>
-                        <!-- ซ่อนบรรทัดราคาเงินสดทั้งหมดถ้าไม่มีข้อมูล -->
                         ${laptop.prices.cash > 0 ? `
                         <p class="mt-2 text-sm text-gray-700">ราคาเงินสด: <span class="font-bold">${laptop.prices.cash.toLocaleString()} บาท</span></p>
                         ` : ''}
                     </div>
                 `;
 
-                // =================================================================
-                // HTML สำหรับการแสดงราคาจากร้านค้าอื่น
-                // เพิ่มคลาส `hidden` เพื่อซ่อนไว้ในตอนแรก
-                // =================================================================
                 const otherStoreDetailsHtml = `
                     <div class="store-details-section space-y-2 mt-4 text-sm bg-gray-50 p-4 rounded-lg hidden">
                         <p class="text-lg font-semibold text-gray-700 mb-2">ราคาเปรียบเทียบจากร้านอื่น</p>
@@ -707,20 +619,6 @@
                     </div>
                 `;
                 
-                // New logic for dimming all common properties based on the checkbox
-                const isCpuIdCommon = commonProps.cpu.has('id');
-                const isCpuArchCommon = commonProps.cpu.has('architecture');
-                const isCpuYearCommon = commonProps.cpu.has('releaseYear');
-                const isRamCommon = commonProps.ram.has('value');
-                const isSsdCommon = commonProps.ssd.has('value');
-                const isDisplayIdCommon = commonProps.display.has('id');
-                const isDisplayTypeCommon = commonProps.display.has('type');
-                const isDisplayHzCommon = commonProps.display.has('hz');
-                const isDisplayResCommon = commonProps.display.has('resolution');
-                const isDisplayBrightCommon = commonProps.display.has('bright');
-                const isDisplayColorCommon = commonProps.display.has('color');
-
-
                 const cardHtml = `
                     <div class="bg-white rounded-2xl shadow-xl flex flex-col space-y-2 laptop-card-main ${
                         laptop.isDisabled ? 'opacity-50 blur-[1px]' : ''
@@ -784,6 +682,8 @@
                                     ${createSegmentedRatingBar(displayRating, 'displayGeneral')}
                                     <p class="text-xs text-gray-500">เล่นเกม</p>
                                     ${createSegmentedRatingBar(displayGamingRating, 'displayGaming')}
+                                    
+                                    <div class="w-full h-1 bg-gray-300 my-4"></div>
 
                                     <div class="detailed-display-section ${isDisplayDetailsShown ? '' : 'hidden'} space-y-1 pt-2">
                                         <div class="flex items-center justify-between text-xs">
@@ -816,35 +716,38 @@
                             </div>
                         </div>
                         
-                        <!-- ส่วนของราคาจะถูกย้ายมาไว้ด้านล่างนี้ -->
                         ${myPriceHtml}
                         ${otherStoreDetailsHtml}
-
                     </div>
                 `;
 
                 const cardDiv = document.createElement('div');
                 cardDiv.innerHTML = cardHtml;
                 const currentCard = cardDiv.firstElementChild;
-
                 laptopCardsContainer.appendChild(currentCard);
             });
 
-            // Attach click event listeners to all spec sections after they are rendered
+            // Refactored click handler for all spec sections
             const allSpecSectionContainers = document.querySelectorAll('.spec-section-container');
             allSpecSectionContainers.forEach(container => {
                 container.addEventListener('click', (event) => {
                     const clickedType = event.currentTarget.dataset.specType;
 
-                    // New logic for the display section to toggle its local details
                     if (clickedType === 'display') {
-                        // Toggle the global state and re-render cards to apply changes
-                        toggleAllDisplayDetails();
+                        // If 'display' is clicked, toggle its details and its highlight status
+                        isDisplayDetailsShown = !isDisplayDetailsShown;
+                        toggleDisplayDetails(isDisplayDetailsShown);
+                        if (isDisplayDetailsShown) {
+                            highlightGlobalRating('display');
+                        } else {
+                            clearGlobalHighlight();
+                        }
                     } else {
-                        // Keep the existing global highlight logic for other spec types
+                        // For other sections, handle the highlight logic and hide display details
                         if (currentHighlightedSpecType === clickedType) {
                             clearGlobalHighlight();
                         } else {
+                            clearDisplayDetails(); // Hide display details when another section is clicked
                             highlightGlobalRating(clickedType);
                         }
                     }
@@ -856,9 +759,6 @@
         // ส่วนที่ 4: ฟังก์ชันสำหรับจัดการ Event และ Logic
         // =================================================================
         
-        /**
-         * Function to toggle the visibility of the price comparison section for ALL cards.
-         */
         const toggleAllComparisonPrices = () => {
             const comparisonSections = document.querySelectorAll('.store-details-section');
             comparisonSections.forEach(section => {
@@ -866,15 +766,11 @@
             });
         };
         
-        /**
-         * Function to toggle the visibility of detailed display sections across all cards.
-         * This is now a global toggle triggered by clicking any display section.
-         */
-        const toggleAllDisplayDetails = () => {
-            isDisplayDetailsShown = !isDisplayDetailsShown;
+        // New function to handle the display details toggle, called from the main click handler
+        const toggleDisplayDetails = (show) => {
             const detailedSections = document.querySelectorAll('.detailed-display-section');
             detailedSections.forEach(section => {
-                if (isDisplayDetailsShown) {
+                if (show) {
                     section.classList.remove('hidden');
                 } else {
                     section.classList.add('hidden');
@@ -882,11 +778,12 @@
             });
         };
 
+        // New function to hide display details, called when other sections are clicked
+        const clearDisplayDetails = () => {
+             isDisplayDetailsShown = false;
+             toggleDisplayDetails(false);
+        };
 
-        /**
-         * Function to highlight a specific spec type across all cards.
-         * @param {string} type - The data-spec-type of the section to highlight.
-         */
         const highlightGlobalRating = (type) => {
             currentHighlightedSpecType = type;
             document.body.classList.add('global-dim-active');
@@ -900,9 +797,6 @@
             });
         };
 
-        /**
-         * Function to clear all global highlights and dimming.
-         */
         const clearGlobalHighlight = () => {
             currentHighlightedSpecType = null;
             document.body.classList.remove('global-dim-active');
@@ -910,32 +804,24 @@
             allSpecSections.forEach(section => {
                 section.classList.remove('highlight-active');
             });
+            clearDisplayDetails();
         };
 
-        /**
-         * Handles the click event for a model selection button.
-         * @param {string} modelName - The name of the model that was clicked.
-         */
         const handleModelClick = (modelName) => {
             const index = selectedModels.indexOf(modelName);
             if (index > -1) {
-                // If already selected, remove it.
                 selectedModels.splice(index, 1);
             } else {
-                // If not selected and the count is less than 3, add it.
                 if (selectedModels.length < 3) {
                     selectedModels.push(modelName);
                 }
             }
             renderModelButtons(brandSelect.value, seriesSelect.value);
-            renderSelectedLaptopsDisplay(); // Update the display of selected laptops
+            renderSelectedLaptopsDisplay();
             renderLaptopCards();
-            clearGlobalHighlight(); // Clear any active highlight when models change
+            clearGlobalHighlight();
         };
 
-        /**
-         * Updates the icon for the sort order button.
-         */
         const updateSortOrderIcon = () => {
             if (sortOrder === 'asc') {
                 sortIconUp.style.display = 'none';
@@ -946,46 +832,44 @@
             }
         };
 
-
-        // Event Listeners for UI changes.
+        // Event Listeners
         brandSelect.addEventListener('change', (e) => {
             const brand = e.target.value;
             localStorage.setItem('selectedBrand', brand);
             localStorage.removeItem('selectedSeries');
             renderSeriesDropdown(brand);
             renderModelButtons(brand, seriesSelect.value);
-            // selectedModels are intentionally NOT cleared here to persist selections
             renderSelectedLaptopsDisplay();
             renderLaptopCards();
-            clearGlobalHighlight(); // Clear any active highlight when filters change
+            clearGlobalHighlight();
         });
 
         seriesSelect.addEventListener('change', (e) => {
             const series = e.target.value;
             localStorage.setItem('selectedSeries', series);
             renderModelButtons(brandSelect.value, series);
-            // selectedModels are intentionally NOT cleared here to persist selections
             renderSelectedLaptopsDisplay();
             renderLaptopCards();
-            clearGlobalHighlight(); // Clear any active highlight when filters change
+            clearGlobalHighlight();
         });
 
         sortBySelect.addEventListener('change', (e) => {
             sortCriteria = e.target.value;
             renderLaptopCards();
-            clearGlobalHighlight(); // Clear any active highlight when sorting changes
+            clearGlobalHighlight();
         });
 
         sortOrderBtn.addEventListener('click', () => {
             sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
             updateSortOrderIcon();
             renderLaptopCards();
-            clearGlobalHighlight(); // Clear any active highlight when sorting changes
+            clearGlobalHighlight();
         });
         
         showDiffCheckbox.addEventListener('change', (e) => {
             showDifferencesOnly = e.target.checked;
             renderLaptopCards();
+            clearGlobalHighlight();
         });
 
 
@@ -996,6 +880,5 @@
             fetchData();
         });
     </script>
-
 </body>
 </html>
