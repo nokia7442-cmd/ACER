@@ -3,1613 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Tycoon - Advanced Staff Management</title>
-    <!-- Google Fonts: Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>ชีทสรุปคำศัพท์</title>
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-        }
-        .btn {
-            @apply flex items-center justify-center px-6 py-3 rounded-xl font-bold text-lg text-white transition-all duration-300 transform hover:scale-105 shadow-lg;
-        }
-        .panel-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 99;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .panel-backdrop.show {
-            opacity: 1;
-        }
-        .panel {
-            background-color: #2D3748; /* Darker Slate-800 */
-            padding: 2.5rem;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            width: 90%;
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
             max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            display: none;
-            flex-direction: column;
-            gap: 1rem;
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 20px auto;
+            color: #333;
+            background-color: #f7f7f7;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        .panel.show {
-            display: flex;
-            transform: scale(1);
-            opacity: 1;
+
+        /* หัวข้อหลัก */
+        .header-section {
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea; /* สีม่วงน้ำเงิน */
+            margin-bottom: 25px;
         }
-        .message-box, .confirmation-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #2D3748;
-            color: #E2E8F0;
-            padding: 2.5rem;
-            border-radius: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            z-index: 200;
+
+        .header-section h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 0px;
+            color: #4a5568;
+        }
+        .header-section p {
+            font-size: 18px;
+            margin-top: 5px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        /* รายการคำศัพท์แต่ละคำ */
+        .vocabulary-item {
+            margin-bottom: 25px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        .vocabulary-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        /* คำศัพท์หลัก */
+        .word-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #2d3748; /* สีเข้ม */
+            margin-bottom: 5px;
+        }
+        
+        /* คำอ่าน */
+        .pronunciation {
+            font-size: 16px;
+            color: #d53f8c; /* สีชมพู */
+            margin-bottom: 10px;
+        }
+        
+        /* ความหมาย */
+        .meaning {
+            font-size: 18px;
+            font-weight: 600;
+            color: #48bb78; /* สีเขียว */
+            margin-bottom: 15px;
+        }
+
+        /* ประโยคตัวอย่าง (อังกฤษ) */
+        .example {
+            font-style: italic;
+            margin-bottom: 4px;
+            font-size: 16px;
+            color: #2b6cb0; /* สีน้ำเงิน */
+        }
+        /* ประโยคตัวอย่าง (ไทย) */
+        .example-thai {
+            font-style: normal;
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 10px;
+            margin-top: 0;
+            padding-left: 10px; /* ย่อหน้าเล็กน้อย */
+            border-left: 2px solid #e9d8fd;
+        }
+
+        /* สไตล์สำหรับ Loading */
+        .loading-text {
             text-align: center;
-            display: none;
+            font-size: 1.2rem;
+            color: #718096;
+            margin-top: 40px;
         }
-        canvas {
-            background-color: #1a202c; /* Deeper background for canvas */
+
+        /* สไตล์สำหรับปุ่มสร้าง PDF */
+        .print-button-container {
+            text-align: center;
+            margin-bottom: 25px;
         }
-        /* New styles for menu cards */
-        .menu-card {
-            @apply bg-gray-700 rounded-xl p-4 shadow-lg flex flex-col items-center text-center transition-transform duration-200 hover:scale-105;
+        #printPdfButton {
+            padding: 10px 20px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            font-weight: bold;
         }
-        .menu-card-image {
-            @apply w-24 h-24 bg-gray-500 rounded-full mb-3 flex items-center justify-center text-3xl text-gray-300;
+        #printPdfButton:hover {
+            background-color: #5a67d8;
+            transform: translateY(-1px);
         }
-        .event-log-container {
-            max-height: 200px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #4a5568 #2d3748;
-        }
-        .event-log-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .event-log-container::-webkit-scrollbar-track {
-            background: #2d3748;
-            border-radius: 10px;
-        }
-        .event-log-container::-webkit-scrollbar-thumb {
-            background-color: #4a5568;
-            border-radius: 10px;
-            border: 2px solid #2d3748;
+
+        /* ************************************** */
+        /* สไตล์สำหรับพิมพ์ (Print Styles) */
+        /* ************************************** */
+        @media print {
+            /* 1. รีเซ็ตพื้นหลังและเงาของ Body */
+            body {
+                background-color: white !important;
+                box-shadow: none !important;
+                margin: 0;
+                max-width: none;
+                padding: 0;
+                color: black !important;
+            }
+
+            /* 2. ซ่อนปุ่มและองค์ประกอบที่ไม่ต้องการพิมพ์ */
+            .print-button-container, .loading-text {
+                display: none;
+            }
+
+            /* 3. ปรับสไตล์ส่วนหัวให้เป็นสีดำ */
+            .header-section {
+                border-bottom: 1px solid black !important;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+            .header-section h1, .header-section p {
+                 color: black !important;
+            }
+            
+            /* 4. ปรับสไตล์รายการคำศัพท์ให้เหมาะสมกับการพิมพ์ */
+            .vocabulary-item {
+                margin-bottom: 15px;
+                background-color: white;
+                border: none; /* ลบ border เดิม */
+                border-bottom: 1px dashed #ccc; /* ใช้เส้นประแบ่งแทน */
+                box-shadow: none; /* ลบเงา */
+                padding: 0;
+            }
+            .vocabulary-item:hover {
+                transform: none;
+            }
+
+            /* 5. บังคับให้ข้อความเป็นสีดำทั้งหมด */
+            .word-title, .pronunciation, .meaning, .example, .example-thai {
+                color: black !important;
+                font-weight: normal !important;
+            }
+            .word-title {
+                 font-weight: bold !important;
+            }
+            .example-thai {
+                border-left: none !important;
+                padding-left: 0;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 flex items-center justify-center min-h-screen p-4 md:p-8 text-gray-100">
-
-    <div class="game-container bg-gray-800 rounded-3xl shadow-2xl p-6 md:p-12 w-full max-w-7xl">
-        <h1 class="text-3xl md:text-5xl font-bold text-center text-teal-400 mb-6 drop-shadow-lg">Coffee Tycoon - Advanced Staff Management</h1>
-        <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Left Panel: Game Stats & Info -->
-            <div class="w-full lg:w-1/3 bg-gray-700 p-8 rounded-2xl shadow-xl flex flex-col gap-6">
-                <div class="flex justify-between items-center pb-4 border-b border-gray-600">
-                    <span class="text-2xl font-semibold">เงินทุน</span>
-                    <span id="money-display" class="text-3xl font-bold text-green-400">0 บาท</span>
-                </div>
-                <div class="flex justify-between items-center pb-4 border-b border-gray-600">
-                    <span class="text-2xl font-semibold">วันที่</span>
-                    <span id="day-display" class="text-3xl font-bold text-amber-400">0</span>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <span class="text-xl font-semibold text-gray-400">สถานะปัจจุบัน</span>
-                    <p class="text-sm">
-                        ความพึงพอใจลูกค้า: <span id="customer-satisfaction-display" class="text-green-300 font-bold">0%</span><br>
-                        ชื่อเสียงร้านค้า: <span id="reputation-display" class="text-yellow-300 font-bold">0%</span><br>
-                        หนี้สิน: <span id="loan-amount-display" class="text-red-400 font-bold">0 บาท</span>
-                    </p>
-                </div>
-                <div class="flex-grow flex flex-col justify-end">
-                    <div class="p-4 bg-gray-600 rounded-lg shadow-inner text-sm text-gray-300 event-log-container">
-                        <p class="font-bold mb-2">บันทึกล่าสุด</p>
-                        <div id="event-log-list">...กำลังรอการเริ่มต้น...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Panel: Menu Cards & Buttons -->
-            <div class="w-full lg:w-2/3 flex flex-col gap-8">
-                <!-- Canvas for visualization -->
-                <canvas id="gameCanvas" class="w-full h-96 border-4 border-gray-600 rounded-lg mb-8"></canvas>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="menu-container">
-                    <!-- Menu cards will be inserted here by JavaScript -->
-                </div>
-                
-                <div class="buttons grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <button id="sell-all-btn" class="btn bg-gradient-to-br from-teal-500 to-green-600 hover:from-teal-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-400">
-                        <i class="fas fa-mug-hot mr-2"></i>ขายสินค้า
-                    </button>
-                    <button id="buy-raw-btn" class="btn bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        <i class="fas fa-shopping-basket mr-2"></i>ซื้อวัตถุดิบ
-                    </button>
-                    <button id="buy-equipment-btn" class="btn bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-orange-400">
-                        <i class="fas fa-tools mr-2"></i>ซื้ออุปกรณ์
-                    </button>
-                    <button id="set-price-btn" class="btn bg-gradient-to-br from-purple-500 to-fuchsia-600 hover:from-purple-600 hover:to-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-purple-400">
-                        <i class="fas fa-tags mr-2"></i>ตั้งราคาขาย
-                    </button>
-                    <button id="hire-staff-btn" class="btn bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                        <i class="fas fa-users mr-2"></i>จัดการพนักงาน
-                    </button>
-                    <button id="marketing-btn" class="btn bg-gradient-to-br from-sky-500 to-cyan-600 hover:from-sky-600 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-sky-400">
-                        <i class="fas fa-bullhorn mr-2"></i>ทำการตลาด
-                    </button>
-                    <button id="loan-btn" class="btn bg-gradient-to-br from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400">
-                        <i class="fas fa-hand-holding-usd mr-2"></i>ขอสินเชื่อ
-                    </button>
-                    <button id="reports-btn" class="btn bg-gradient-to-br from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-rose-400">
-                        <i class="fas fa-chart-line mr-2"></i>รายงานการเงิน
-                    </button>
-                    <button id="research-btn" class="btn bg-gradient-to-br from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                        <i class="fas fa-flask mr-2"></i>วิจัย
-                    </button>
-                    <button id="next-day-btn" class="btn bg-gradient-to-br from-slate-500 to-gray-600 hover:from-slate-600 hover:to-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                        <i class="fas fa-sun mr-2"></i>ไปวันถัดไป
-                    </button>
-                    <button id="save-game-btn" class="btn bg-gradient-to-br from-gray-500 to-gray-700 hover:from-gray-600 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                        <i class="fas fa-save mr-2"></i>บันทึกเกม
-                    </button>
-                    <button id="load-game-btn" class="btn bg-gradient-to-br from-gray-500 to-gray-700 hover:from-gray-600 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                        <i class="fas fa-folder-open mr-2"></i>โหลดเกม
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Panels and Modals -->
-    <div id="panel-backdrop" class="panel-backdrop">
-        <!-- Panel for setting prices -->
-        <div id="price-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">ตั้งราคาขายเมนู</h3>
-            <label class="block mb-2">
-                <span class="text-gray-200">เลือกเมนู:</span>
-                <select id="menu-item-select" class="block w-full mt-1 p-2 bg-gray-700 border-gray-600 rounded-lg shadow-sm text-gray-100"></select>
-            </label>
-            <label class="block mb-4">
-                <span class="text-gray-200">ใส่ราคาใหม่:</span>
-                <input type="number" id="new-price-input" placeholder="ใส่ราคาใหม่" class="block w-full mt-1 p-2 bg-gray-700 border-gray-600 rounded-lg shadow-sm text-gray-100">
-            </label>
-            <div class="flex justify-end gap-2">
-                <button id="confirm-price-btn" class="btn bg-gradient-to-br from-teal-500 to-green-600"><i class="fas fa-check-circle mr-2"></i>ยืนยัน</button>
-                <button id="cancel-price-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times-circle mr-2"></i>ยกเลิก</button>
-            </div>
-        </div>
-        
-        <!-- Panel for selling items (now mostly for info) -->
-        <div id="sell-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">ขายสินค้า</h3>
-            <p class="text-gray-400">ระบบขายสินค้าอัตโนมัติจะทำงานทุกวัน</p>
-            <p class="text-gray-400">คุณต้องแน่ใจว่ามีวัตถุดิบและอุปกรณ์พร้อม</p>
-            <div class="flex justify-end mt-4">
-                <button id="cancel-sell-btn" class="btn bg-gradient-to-br from-gray-500 to-gray-700"><i class="fas fa-times mr-2"></i>ปิด</button>
-            </div>
-        </div>
-
-        <!-- Panel for buying new raw materials -->
-        <div id="buy-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">ซื้อวัตถุดิบ</h3>
-            <table class="min-w-full divide-y divide-gray-600">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">วัตถุดิบ</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ราคา/หน่วย</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">จำนวนในสต็อก</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">จำนวนที่ต้องการซื้อ</th>
-                    </tr>
-                </thead>
-                <tbody id="buy-item-table-body" class="bg-gray-800 divide-y divide-gray-600">
-                    <!-- Table rows will be inserted here by JavaScript -->
-                </tbody>
-            </table>
-            <div class="flex justify-end gap-2 mt-4">
-                <button id="pay-btn" class="btn bg-gradient-to-br from-blue-500 to-indigo-600"><i class="fas fa-credit-card mr-2"></i>ชำระเงิน</button>
-                <button id="cancel-buy-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times mr-2"></i>ปิด</button>
-            </div>
-        </div>
-
-        <!-- Panel for buying new equipment -->
-        <div id="equipment-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">ซื้ออุปกรณ์</h3>
-            <table class="min-w-full divide-y divide-gray-600">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">อุปกรณ์</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ราคา</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">สถานะ</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"></th>
-                    </tr>
-                </thead>
-                <tbody id="equipment-item-table-body" class="bg-gray-800 divide-y divide-gray-600">
-                    <!-- Table rows will be inserted here by JavaScript -->
-                </tbody>
-            </table>
-            <div class="flex justify-end mt-4">
-                <button id="cancel-equipment-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times mr-2"></i>ปิด</button>
-            </div>
-        </div>
-
-        <!-- Panel for hiring staff -->
-        <div id="hire-staff-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">จัดการพนักงาน</h3>
-            <p class="text-gray-400">พนักงานปัจจุบัน: <span id="staff-count" class="font-bold text-teal-400">0</span> คน</p>
-            <button id="hire-new-staff-btn" class="btn bg-gradient-to-br from-emerald-500 to-teal-600 py-2 px-4 text-base mb-4"><i class="fas fa-user-plus mr-2"></i>จ้างพนักงานใหม่</button>
-            <table class="min-w-full divide-y divide-gray-600 mt-4">
-                <thead class="bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ชื่อ</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ค่าจ้าง</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ทักษะ</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ขวัญกำลังใจ</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody id="staff-table-body" class="bg-gray-800 divide-y divide-gray-600">
-                    <!-- Table rows will be inserted here by JavaScript -->
-                </tbody>
-            </table>
-            <div class="flex justify-end mt-4">
-                <button id="cancel-staff-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times mr-2"></i>ปิด</button>
-            </div>
-        </div>
-
-        <!-- Panel for marketing -->
-        <div id="marketing-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">ทำการตลาด</h3>
-            <p class="text-gray-400">งบประมาณปัจจุบัน: <span id="current-marketing-budget" class="font-bold">0</span> บาท</p>
-            <p class="text-gray-400">งบที่ต้องการลงทุนในวันนี้:</p>
-            <input type="range" id="marketing-slider" min="0" max="500" value="0" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-teal-400">
-            <p class="text-lg font-bold text-center text-teal-400"><span id="marketing-budget-display">0</span> บาท</p>
-            <div class="flex justify-end gap-2 mt-4">
-                <button id="confirm-marketing-btn" class="btn bg-gradient-to-br from-teal-500 to-green-600"><i class="fas fa-check-circle mr-2"></i>ยืนยัน</button>
-                <button id="cancel-marketing-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times-circle mr-2"></i>ยกเลิก</button>
-            </div>
-        </div>
-
-        <!-- Panel for loan -->
-        <div id="loan-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">ขอสินเชื่อ</h3>
-            <p class="text-gray-400">ยอดหนี้ปัจจุบัน: <span id="current-loan-amount" class="font-bold">0</span> บาท</p>
-            <p class="text-gray-400">ดอกเบี้ยรายวัน: <span id="daily-loan-interest" class="font-bold">0</span> บาท</p>
-            <label class="block mb-4">
-                <span class="text-gray-200">จำนวนเงินที่ต้องการกู้:</span>
-                <input type="number" id="loan-amount-input" placeholder="ใส่จำนวนเงิน" class="block w-full mt-1 p-2 bg-gray-700 border-gray-600 rounded-lg shadow-sm text-gray-100">
-            </label>
-            <div class="flex justify-end gap-2 mt-4">
-                <button id="request-loan-btn" class="btn bg-gradient-to-br from-violet-500 to-purple-600"><i class="fas fa-dollar-sign mr-2"></i>ยืนยันการกู้</button>
-                <button id="cancel-loan-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times mr-2"></i>ยกเลิก</button>
-            </div>
-        </div>
-
-        <!-- Panel for Reports -->
-        <div id="reports-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">รายงานการเงิน</h3>
-            
-            <h4 class="text-xl font-bold text-gray-200">งบกำไรขาดทุน (วันนี้)</h4>
-            <div class="bg-gray-800 p-4 rounded-lg">
-                <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">รายได้จากยอดขาย:</span>
-                    <span id="sales-revenue" class="text-green-400 font-bold">0 บาท</span>
-                </div>
-                <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">ต้นทุนวัตถุดิบ (COGS):</span>
-                    <span id="cogs" class="text-red-400 font-bold">0 บาท</span>
-                </div>
-                <hr class="border-gray-600 my-2">
-                <div class="flex justify-between font-bold">
-                    <span class="text-gray-200">กำไรขั้นต้น:</span>
-                    <span id="gross-profit" class="text-green-400">0 บาท</span>
-                </div>
-                <div class="flex justify-between mt-2 mb-1">
-                    <span class="text-gray-400">ค่าใช้จ่ายในการดำเนินงาน:</span>
-                    <span id="operating-expenses" class="text-red-400 font-bold">0 บาท</span>
-                </div>
-                <hr class="border-gray-600 my-2">
-                <div class="flex justify-between font-bold">
-                    <span class="text-gray-200">กำไรสุทธิ:</span>
-                    <span id="net-profit" class="text-green-400">0 บาท</span>
-                </div>
-            </div>
-
-            <h4 class="text-xl font-bold text-gray-200 mt-6">งบดุล (ปัจจุบัน)</h4>
-            <div class="bg-gray-800 p-4 rounded-lg">
-                <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">สินทรัพย์ (เงินสด):</span>
-                    <span id="assets-cash" class="text-teal-400 font-bold">0 บาท</span>
-                </div>
-                <div class="flex justify-between mb-1">
-                    <span class="text-gray-400">สินทรัพย์ (วัตถุดิบ):</span>
-                    <span id="assets-supplies" class="text-teal-400 font-bold">0 บาท</span>
-                </div>
-                <hr class="border-gray-600 my-2">
-                <div class="flex justify-between font-bold">
-                    <span class="text-gray-200">รวมสินทรัพย์:</span>
-                    <span id="total-assets" class="text-teal-400">0 บาท</span>
-                </div>
-                <div class="flex justify-between mt-2">
-                    <span class="text-gray-400">หนี้สิน (สินเชื่อ):</span>
-                    <span id="liabilities-loan" class="text-red-400 font-bold">0 บาท</span>
-                </div>
-            </div>
-            
-            <div class="flex justify-end mt-4">
-                <button id="cancel-reports-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times mr-2"></i>ปิด</button>
-            </div>
-        </div>
-
-        <!-- Panel for Research and Development -->
-        <div id="research-panel" class="panel">
-            <h3 class="text-2xl font-bold mb-4 text-teal-400">วิจัยและพัฒนา</h3>
-            <div id="research-project-list">
-                <!-- Research projects will be inserted here by JavaScript -->
-            </div>
-            <div class="flex justify-end mt-4">
-                <button id="cancel-research-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600"><i class="fas fa-times mr-2"></i>ปิด</button>
-            </div>
-        </div>
-        
+<body>
+    <!-- ส่วนหัวข้อหลัก -->
+    <div class="header-section">
+        <h1>Family and relationships</h1>
+        <p>ครอบครัว และความสัมพันธ์ (ดึงข้อมูลจาก Google Sheet)</p>
     </div>
 
-    <!-- Message Box -->
-    <div id="message-box" class="message-box">
-        <p id="message-text" class="mb-4 text-gray-100"></p>
-        <button id="close-message-btn" class="btn bg-gradient-to-br from-teal-500 to-green-600"><i class="fas fa-check-circle mr-2"></i>ตกลง</button>
+    <!-- ปุ่มสร้าง PDF -->
+    <div class="print-button-container">
+        <button id="printPdfButton">สร้าง PDF/พิมพ์ชีทสรุป</button>
     </div>
 
-    <!-- Confirmation Box (New) -->
-    <div id="confirmation-box" class="confirmation-box">
-        <p id="confirmation-text" class="mb-4 text-gray-100"></p>
-        <div class="flex justify-center gap-4">
-            <button id="confirm-yes-btn" class="btn bg-gradient-to-br from-teal-500 to-green-600 px-4 py-2 text-base">
-                <i class="fas fa-check mr-2"></i>ยืนยัน
-            </button>
-            <button id="confirm-no-btn" class="btn bg-gradient-to-br from-red-500 to-rose-600 px-4 py-2 text-base">
-                <i class="fas fa-times mr-2"></i>ยกเลิก
-            </button>
-        </div>
+    <!-- ส่วนที่จะแสดงคำศัพท์ที่ดึงมาจาก Google Sheet -->
+    <div id="vocabulary-content">
+        <p class="loading-text">กำลังโหลดคำศัพท์...</p>
     </div>
-
 
     <script>
-        // DOM element references
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const menuContainer = document.getElementById('menu-container');
-
-        // Game state and data definitions
-        const availableEquipment = [
-            { name: 'เครื่องชงกาแฟดริป (ยี่ห้อ Basic)', type: 'เครื่องชงกาแฟดริป', cost: 1000 },
-            { name: 'เครื่องชงกาแฟดริป (ยี่ห้อ Premium)', type: 'เครื่องชงกาแฟดริป', cost: 2500 },
-            { name: 'เครื่องชงกาแฟแรงดัน (ยี่ห้อ Basic)', type: 'เครื่องชงกาแฟแรงดัน', cost: 5000 },
-            { name: 'เครื่องชงกาแฟแรงดัน (ยี่ห้อ Premium)', type: 'เครื่องชงกาแฟแรงดัน', cost: 12000 },
-            { name: 'เครื่องปั่น (ยี่ห้อ Basic)', type: 'เครื่องปั่น', cost: 2000 },
-            { name: 'เครื่องปั่น (ยี่ห้อ Super)', type: 'เครื่องปั่น', cost: 4500 },
-            { name: 'เตาอบ (ยี่ห้อ Basic)', type: 'เตาอบ', cost: 3000 },
-            { name: 'เตาอบ (ยี่ห้อ Pro)', type: 'เตาอบ', cost: 7000 },
-            { name: 'เครื่องทำขนมปัง (ยี่ห้อ Home)', type: 'เครื่องทำขนมปัง', cost: 1500 },
-            { name: 'เครื่องทำขนมปัง (ยี่ห้อ Industrial)', type: 'เครื่องทำขนมปัง', cost: 6000 }
-        ];
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR_jkPuMWbwUrIzyF4FKmBcXWxsdP2mogpDgsOTAjq-ElihbTs9tCy6GyghVaTCAUadbi6KTxUy0arO/pub?gid=331265533&single=true&output=csv';
+        const VOCAB_CONTAINER_ID = 'vocabulary-content';
         
-        const initialMenuRecipes = [
-            {
-                name: 'กาแฟดำ',
-                ingredients: [{ name: 'เมล็ดกาแฟอาราบิก้า', quantity: 1 }],
-                equipment: ['เครื่องชงกาแฟดริป'],
-                icon: '<i class="fas fa-coffee"></i>',
-                baseCost: 50
-            },
-            {
-                name: 'ลาเต้ร้อน',
-                ingredients: [{ name: 'เมล็ดกาแฟอาราบิก้า', quantity: 1 }, { name: 'นมสด', quantity: 1 }],
-                equipment: ['เครื่องชงกาแฟแรงดัน'],
-                icon: '<i class="fas fa-mug-hot"></i>',
-                baseCost: 70
-            },
-            {
-                name: 'คาปูชิโนเย็น',
-                ingredients: [{ name: 'เมล็ดกาแฟโรบัสต้า', quantity: 1 }, { name: 'นมสด', quantity: 1 }],
-                equipment: ['เครื่องชงกาแฟแรงดัน', 'เครื่องปั่น'],
-                icon: '<i class="fas fa-ice-cream"></i>',
-                baseCost: 85
-            },
-            {
-                name: 'เค้กช็อกโกแลต',
-                ingredients: [{ name: 'แป้ง', quantity: 1 }, { name: 'โกโก้', quantity: 1 }],
-                equipment: ['เตาอบ'],
-                icon: '<i class="fas fa-birthday-cake"></i>',
-                baseCost: 60
-            },
-            {
-                name: 'ขนมปังเนยสด',
-                ingredients: [{ name: 'แป้ง', quantity: 1 }, { name: 'เนย', quantity: 1 }],
-                equipment: ['เตาอบ', 'เครื่องทำขนมปัง'],
-                icon: '<i class="fas fa-bread-slice"></i>',
-                baseCost: 45
-            }
+        // ชื่อคอลัมน์ที่กำหนดโดยผู้ใช้
+        const HEADERS = [
+            'word_name', 
+            'word_ipa', 
+            'word_meaning', 
+            'word_sen1', 
+            'word_sentr1', 
+            'word_sen2', 
+            'word_sentr2'
         ];
 
-        let buyableProducts = [
-            { name: 'เมล็ดกาแฟอาราบิก้า', baseCost: 40, quality: 0.8 },
-            { name: 'เมล็ดกาแฟโรบัสต้า', baseCost: 30, quality: 0.7 },
-            { name: 'นมสด', baseCost: 20, quality: 0.9 },
-            { name: 'น้ำตาล', baseCost: 10, quality: 0.95 },
-            { name: 'โกโก้', baseCost: 25, quality: 0.85 },
-            { name: 'แป้ง', baseCost: 15, quality: 0.9 },
-            { name: 'เนย', baseCost: 20, quality: 0.85 }
-        ];
-
-        // --- Customer Types (No changes here, but good to have) ---
-        const customerTypes = [
-            { name: "นักเรียน นักศึกษา", probability: 0.4, spendingPower: 0.6, preference: ["เย็น", "ขนม", "ราคาถูก"] },
-            { name: "พนักงานออฟฟิศ", probability: 0.5, spendingPower: 1.2, preference: ["กาแฟ", "ร้อน", "รวดเร็ว"] },
-            { name: "นักท่องเที่ยว", probability: 0.1, spendingPower: 1.5, preference: ["ของดี", "ไม่ซ้ำใคร"] }
-        ];
-
-        // --- New: R&D Projects for Staff Training ---
-        const researchProjects = [
-            { 
-                name: "กาแฟสกัดเย็นสูตรลับ",
-                cost: 5000, 
-                daysToComplete: 5,
-                unlocked: false,
-                icon: '<i class="fas fa-mortar-pestle"></i>',
-                effect: { 
-                    type: "unlock_menu", 
-                    menuItem: {
-                        name: 'กาแฟสกัดเย็น',
-                        ingredients: [{ name: 'เมล็ดกาแฟอาราบิก้า', quantity: 2 }],
-                        equipment: ['เครื่องชงกาแฟดริป'],
-                        icon: '<i class="fas fa-glass-martini"></i>',
-                        baseCost: 100,
-                        tags: ["เย็น", "ไม่ซ้ำใคร"]
-                    }
-                }
-            },
-            {
-                name: "อบรมพนักงาน (ทักษะการตลาด)",
-                cost: 2000,
-                daysToComplete: 3,
-                unlocked: false,
-                icon: '<i class="fas fa-user-graduate"></i>',
-                effect: {
-                    type: "staff_skill_up",
-                    skill: "marketing",
-                    increase: 0.1
-                }
-            },
-            {
-                name: "หลักสูตรบาริสต้าขั้นสูง",
-                cost: 4000,
-                daysToComplete: 7,
-                unlocked: false,
-                icon: '<i class="fas fa-award"></i>',
-                effect: {
-                    type: "unlock_training",
-                    skillToTrain: "barista",
-                    trainingCost: 1000
-                }
-            },
-            {
-                name: "หลักสูตรบริการขั้นสูง",
-                cost: 4000,
-                daysToComplete: 7,
-                unlocked: false,
-                icon: '<i class="fas fa-handshake"></i>',
-                effect: {
-                    type: "unlock_training",
-                    skillToTrain: "service",
-                    trainingCost: 1000
-                }
-            },
-            {
-                name: "หลักสูตรความเร็วในการทำงาน",
-                cost: 4000,
-                daysToComplete: 7,
-                unlocked: false,
-                icon: '<i class="fas fa-tachometer-alt"></i>',
-                effect: {
-                    type: "unlock_training",
-                    skillToTrain: "speed",
-                    trainingCost: 1000
-                }
-            }
-        ];
-        
-        // --- Add Events to the game ---
-        const gameEvents = [
-            { name: "วันหยุดยาว", description: "ลูกค้ามากขึ้นเพราะเป็นวันหยุดยาว!", effect: { customerMultiplier: 1.5, supplierPriceChange: 0 }, duration: 3, probability: 0.1 },
-            { name: "เทศกาลกาแฟ", description: "ลูกค้าสนใจกาแฟพิเศษมากขึ้น!", effect: { customerMultiplier: 1.2, supplierPriceChange: 0 }, duration: 5, probability: 0.05 },
-            { name: "น้ำท่วมท้องถิ่น", description: "การขนส่งวัตถุดิบล่าช้า ทำให้ราคาวัตถุดิบสูงขึ้น!", effect: { customerMultiplier: 0.8, supplierPriceChange: 0.2 }, duration: 2, probability: 0.05 },
-            { name: "อากาศร้อนจัด", description: "ลูกค้าอยากดื่มเครื่องดื่มเย็นมากขึ้น!", effect: { coldDrinkMultiplier: 1.5, hotDrinkMultiplier: 0.5 }, duration: 1, probability: 0.2 },
-            { name: "ข่าวลือไม่ดี", description: "มีข่าวลือด้านลบเกี่ยวกับร้านทำให้ยอดขายตกต่ำ!", effect: { reputationChange: -0.1 }, duration: 2, probability: 0.03 },
-            { name: "ไม่มีเหตุการณ์", description: "วันนี้เป็นวันที่ปกติ", effect: {}, duration: 1, probability: 0.5 }
-        ];
-
-        const initialGameState = {
-            player: {
-                money: 5000,
-                day: 1,
-                daysInMonth: 1,
-                lastEvent: "ยินดีต้อนรับสู่ Coffee Tycoon!",
-                eventLog: ["ยินดีต้อนรับสู่ Coffee Tycoon!"],
-                dailyRent: 200,
-                loan: {
-                    amount: 0,
-                    interestRate: 0.05,
-                    dailyInterest: 0
-                },
-                finances: {
-                    salesRevenue: 0,
-                    cogs: 0,
-                    operatingExpenses: 0,
-                    grossProfit: 0,
-                    netProfit: 0,
-                    totalAssets: 0,
-                    inventoryValue: 0
-                }
-            },
-            shop: {
-                inventory: [
-                    { name: 'เมล็ดกาแฟอาราบิก้า', stock: 10, cost: 45, quality: 0.8 },
-                    { name: 'นมสด', stock: 5, cost: 20, quality: 0.9 },
-                    { name: 'แป้ง', stock: 0, cost: 10, quality: 0.9 }
-                ],
-                equipment: [{ name: 'เครื่องชงกาแฟดริป (ยี่ห้อ Basic)' }],
-                menu: initialMenuRecipes.map(item => ({...item, price: item.baseCost + 20})),
-                marketingBudget: 0,
-                customerSatisfaction: 0.5,
-                reputation: 0.5 // New: Reputation score
-            },
-            // --- New: Staff structure with multiple skills ---
-            employees: [
-                { name: 'บาริสต้ามือใหม่', wage: 10000, skills: { barista: 0.5, speed: 0.6, service: 0.7, marketing: 0.2 }, morale: 0.9 }
-            ],
-            staffForHire: [
-                { name: 'พนักงานขายเก่ง', wage: 15000, skills: { barista: 0.4, speed: 0.8, service: 0.9, marketing: 0.5 }, morale: 0.8 },
-                { name: 'เชฟขนมหวาน', wage: 12000, skills: { barista: 0.2, speed: 0.5, service: 0.8, marketing: 0.1 }, morale: 0.95 }
-            ],
-            // --- New: Training system state ---
-            training: {
-                // Initialize with unlocked skills. 'marketing' skill is now part of the base employee skills.
-                availableSkills: ['barista', 'service', 'speed'], 
-                activeTraining: null,
-                daysRemaining: 0
-            },
-            currentEvent: null, // New: To hold the active event
-            eventDuration: 0,
-            research: {
-                projects: researchProjects.map(p => ({ ...p })), // Deep copy
-                activeProject: null,
-                daysRemaining: 0
-            }
-        };
-
-        let gameState = { ...initialGameState };
-        let currentSupplierPrices = getSupplierPrices();
-
-        // UI element references
-        const panelBackdrop = document.getElementById('panel-backdrop');
-        const pricePanel = document.getElementById('price-panel');
-        const menuItemSelect = document.getElementById('menu-item-select');
-        const newPriceInput = document.getElementById('new-price-input');
-        const confirmPriceBtn = document.getElementById('confirm-price-btn');
-        const cancelPriceBtn = document.getElementById('cancel-price-btn');
-
-        const sellPanel = document.getElementById('sell-panel');
-        const cancelSellBtn = document.getElementById('cancel-sell-btn');
-
-        const buyPanel = document.getElementById('buy-panel');
-        const buyItemTableBody = document.getElementById('buy-item-table-body');
-        const cancelBuyBtn = document.getElementById('cancel-buy-btn');
-        const payBtn = document.getElementById('pay-btn');
-        
-        const equipmentPanel = document.getElementById('equipment-panel');
-        const equipmentItemTableBody = document.getElementById('equipment-item-table-body');
-        const cancelEquipmentBtn = document.getElementById('cancel-equipment-btn');
-
-        const hireStaffPanel = document.getElementById('hire-staff-panel');
-        const staffTableBody = document.getElementById('staff-table-body');
-        const cancelStaffBtn = document.getElementById('cancel-staff-btn');
-        const hireNewStaffBtn = document.getElementById('hire-new-staff-btn');
-
-        const marketingPanel = document.getElementById('marketing-panel');
-        const marketingSlider = document.getElementById('marketing-slider');
-        const marketingBudgetDisplay = document.getElementById('marketing-budget-display');
-        const currentMarketingBudget = document.getElementById('current-marketing-budget');
-        const confirmMarketingBtn = document.getElementById('confirm-marketing-btn');
-        const cancelMarketingBtn = document.getElementById('cancel-marketing-btn');
-        
-        const loanPanel = document.getElementById('loan-panel');
-        const currentLoanAmount = document.getElementById('current-loan-amount');
-        const dailyLoanInterest = document.getElementById('daily-loan-interest');
-        const loanAmountInput = document.getElementById('loan-amount-input');
-        const requestLoanBtn = document.getElementById('request-loan-btn');
-        const cancelLoanBtn = document.getElementById('cancel-loan-btn');
-
-        const reportsPanel = document.getElementById('reports-panel');
-        const cancelReportsBtn = document.getElementById('cancel-reports-btn');
-
-        const researchPanel = document.getElementById('research-panel');
-        const researchProjectList = document.getElementById('research-project-list');
-        const cancelResearchBtn = document.getElementById('cancel-research-btn');
-
-
-        const messageBox = document.getElementById('message-box');
-        const messageText = document.getElementById('message-text');
-        const closeMessageBoxBtn = document.getElementById('close-message-btn');
-
-        // New Confirmation Box Elements
-        const confirmationBox = document.getElementById('confirmation-box');
-        const confirmationText = document.getElementById('confirmation-text');
-        const confirmYesBtn = document.getElementById('confirm-yes-btn');
-        const confirmNoBtn = document.getElementById('confirm-no-btn');
-
-        // Main game display elements
-        const moneyDisplay = document.getElementById('money-display');
-        const dayDisplay = document.getElementById('day-display');
-        const customerSatisfactionDisplay = document.getElementById('customer-satisfaction-display');
-        const reputationDisplay = document.getElementById('reputation-display'); // New UI for reputation
-        const loanAmountDisplay = document.getElementById('loan-amount-display');
-        const eventLogList = document.getElementById('event-log-list');
-
-        function updateUI() {
-            moneyDisplay.textContent = `${gameState.player.money.toLocaleString()} บาท`;
-            dayDisplay.textContent = `${gameState.player.day} (วันที่ ${gameState.player.daysInMonth} ของเดือน)`;
-            customerSatisfactionDisplay.textContent = `${(gameState.shop.customerSatisfaction * 100).toFixed(0)}%`;
-            reputationDisplay.textContent = `${(gameState.shop.reputation * 100).toFixed(0)}%`;
-            loanAmountDisplay.textContent = `${gameState.player.loan.amount.toLocaleString()} บาท`;
+        // ฟังก์ชันสำหรับแยกวิเคราะห์ข้อมูล CSV เป็นอาร์เรย์ของวัตถุ
+        function parseCSV(csvText) {
+            // แยกบรรทัด (ใช้ regex เพื่อจัดการกับ newline ทั้งแบบ \r\n และ \n)
+            const lines = csvText.trim().split(/\r?\n/);
             
-            // Update event log
-            eventLogList.innerHTML = '';
-            gameState.player.eventLog.slice(-5).forEach(log => {
-                const p = document.createElement('p');
-                p.textContent = log;
-                p.className = 'my-1';
-                eventLogList.appendChild(p);
-            });
-
-            // Update menu cards
-            renderMenuCards();
-        }
-
-        function renderMenuCards() {
-            menuContainer.innerHTML = '';
-            gameState.shop.menu.forEach(item => {
-                const canMake = canMakeMenuItem(item);
-                const card = document.createElement('div');
-                card.className = `menu-card ${canMake ? 'bg-gray-700' : 'bg-red-900 opacity-50'}`;
-                card.innerHTML = `
-                    <div class="menu-card-image">
-                        ${item.icon}
-                    </div>
-                    <h4 class="text-xl font-bold text-teal-400 mt-2">${item.name}</h4>
-                    <p class="text-gray-300">ราคา: ${item.price.toLocaleString()} บาท</p>
-                    <p class="text-sm ${canMake ? 'text-green-400' : 'text-red-400'}">
-                        สถานะ: ${canMake ? 'พร้อมขาย' : 'ขาดวัตถุดิบ/อุปกรณ์'}
-                    </p>
-                `;
-                menuContainer.appendChild(card);
-            });
-        }
-
-        function showPanel(panel) {
-            panelBackdrop.style.display = 'flex';
-            setTimeout(() => {
-                panelBackdrop.classList.add('show');
-                panel.classList.add('show');
-            }, 10);
-        }
-
-        function hidePanel(panel) {
-            panel.classList.remove('show');
-            panelBackdrop.classList.remove('show');
-            setTimeout(() => {
-                panelBackdrop.style.display = 'none';
-            }, 300);
-        }
-
-        function showMessage(text) {
-            messageText.textContent = text;
-            messageBox.style.display = 'block';
-        }
-
-        function showConfirmation(text, onConfirm) {
-            confirmationText.textContent = text;
-            confirmationBox.style.display = 'block';
+            // ข้ามบรรทัดแรกที่เป็น Header ของ Google Sheet (ถ้ามี)
+            const dataLines = lines.slice(1); 
             
-            const handleYes = () => {
-                onConfirm();
-                hideConfirmation();
-                confirmYesBtn.removeEventListener('click', handleYes);
-            };
-            
-            const handleNo = () => {
-                hideConfirmation();
-                confirmNoBtn.removeEventListener('click', handleNo);
-            };
+            const data = [];
+            dataLines.forEach(line => {
+                // แยกค่าด้วยเครื่องหมายคอมมาตรงๆ
+                const values = line.split(','); 
 
-            confirmYesBtn.addEventListener('click', handleYes);
-            confirmNoBtn.addEventListener('click', handleNo);
-        }
-
-        function hideConfirmation() {
-            confirmationBox.style.display = 'none';
-        }
-
-        closeMessageBoxBtn.addEventListener('click', () => {
-            messageBox.style.display = 'none';
-        });
-
-        // Save game function
-        function saveGame() {
-            try {
-                localStorage.setItem('coffeeTycoonSave_AdvancedStaff_v6', JSON.stringify(gameState));
-                gameState.player.eventLog.push("💾 บันทึกเกมสำเร็จ!");
-            } catch (e) {
-                gameState.player.eventLog.push("❌ เกิดข้อผิดพลาดในการบันทึกเกม: " + e.message);
-            }
-            updateUI();
-        }
-
-        // Load game function
-        function loadGame() {
-            try {
-                const savedState = localStorage.getItem('coffeeTycoonSave_AdvancedStaff_v6');
-                if (savedState) {
-                    gameState = JSON.parse(savedState);
-                    gameState.player.eventLog.push("✅ โหลดเกมสำเร็จ!");
-                } else {
-                    gameState = JSON.parse(JSON.stringify(initialGameState));
-                    gameState.player.eventLog.push("ไม่พบข้อมูลที่บันทึกไว้ เริ่มเกมใหม่!");
-                }
-            } catch (e) {
-                gameState.player.eventLog.push("❌ เกิดข้อผิดพลาดในการโหลดเกม: " + e.message);
-                gameState = JSON.parse(JSON.stringify(initialGameState));
-            }
-            updateUI();
-        }
-
-        // Get supplier prices with slight fluctuation
-        function getSupplierPrices() {
-            let prices = {};
-            buyableProducts.forEach(product => {
-                const priceFluctuation = (Math.random() - 0.5) * 0.2; // +/- 10%
-                let cost = Math.round(product.baseCost * (1 + priceFluctuation));
-                // Apply event-based price change
-                if (gameState.currentEvent && gameState.currentEvent.effect.supplierPriceChange) {
-                    cost *= (1 + gameState.currentEvent.effect.supplierPriceChange);
-                }
-                prices[product.name] = { price: Math.max(10, cost), quality: product.quality };
-            });
-            return prices;
-        }
-
-        function buyItem(productName, cost, quantity, quality) {
-            let existingItem = gameState.shop.inventory.find(item => item.name === productName);
-            if (existingItem) {
-                const totalQuantity = existingItem.stock + quantity;
-                existingItem.quality = ((existingItem.quality * existingItem.stock) + (quality * quantity)) / totalQuantity;
-                existingItem.stock += quantity;
-            } else {
-                gameState.shop.inventory.push({ name: productName, stock: quantity, cost: cost, quality: quality });
-            }
-            gameState.player.money -= cost * quantity;
-        }
-
-        function buyEquipment(equipmentName) {
-            const eqToBuy = availableEquipment.find(eq => eq.name === equipmentName);
-            if (!eqToBuy) { return; }
-            if (gameState.player.money < eqToBuy.cost) {
-                showMessage("เงินไม่พอ!");
-                return;
-            }
-            const existingEq = gameState.shop.equipment.some(eq => eq.name === equipmentName);
-            if(existingEq) {
-                showMessage("คุณมีอุปกรณ์ชิ้นนี้อยู่แล้ว");
-                return;
-            }
-            
-            gameState.player.money -= eqToBuy.cost;
-            gameState.shop.equipment.push({ name: equipmentName });
-            gameState.player.eventLog.push(`🎉 ซื้อ ${eqToBuy.name} ในราคา ${eqToBuy.cost.toLocaleString()} บาท`);
-            updateUI();
-            hidePanel(equipmentPanel);
-        }
-
-        // --- New: Hire Staff function with new skill structure ---
-        function hireStaff() {
-            if (gameState.staffForHire.length === 0) {
-                showMessage("ไม่มีพนักงานใหม่ให้จ้างในขณะนี้");
-                return;
-            }
-            const staffForHire = gameState.staffForHire.shift();
-            if (gameState.player.money < staffForHire.wage) {
-                showMessage("เงินไม่พอจ่ายค่าจ้างเดือนแรก!");
-                return;
-            }
-            gameState.player.money -= staffForHire.wage;
-            gameState.employees.push(staffForHire);
-            gameState.player.eventLog.push(`🎉 จ้าง ${staffForHire.name} ในราคา ${staffForHire.wage.toLocaleString()} บาท/เดือน`);
-            updateUI();
-            renderStaffPanel(); // Refresh panel
-        }
-        
-        function fireStaff(staffName) {
-            const index = gameState.employees.findIndex(emp => emp.name === staffName);
-            if (index > -1) {
-                const firedStaff = gameState.employees.splice(index, 1)[0];
-                gameState.staffForHire.push(firedStaff); // Put them back in the pool
-                gameState.player.eventLog.push(`💔 ไล่ ${firedStaff.name} ออกจากงาน`);
-                renderStaffPanel();
-                updateUI();
-            }
-        }
-        
-        // --- Modified: Training function for specific skills ---
-        function trainStaff(staffName, skillToTrain) {
-            const staffToTrain = gameState.employees.find(emp => emp.name === staffName);
-            if (!staffToTrain) return;
-
-            const trainingCost = 2000;
-            const trainingDuration = 3;
-            
-            // Check if the skill is available for training via research
-            const isSkillUnlocked = gameState.research.projects.some(p => 
-                p.effect?.type === "unlock_training" && p.effect?.skillToTrain === skillToTrain && p.unlocked
-            );
-            
-            // Allow training on the default skills
-            if (!isSkillUnlocked && !['barista', 'service', 'speed'].includes(skillToTrain)) {
-                 showMessage("คุณยังไม่ได้ปลดล็อกการฝึกอบรมสำหรับทักษะนี้!");
-                 return;
-            }
-
-            if (gameState.player.money < trainingCost) {
-                showMessage("เงินไม่พอจ่ายค่าฝึกอบรม!");
-                return;
-            }
-            if (gameState.training.activeTraining) {
-                showMessage("มีพนักงานอื่นกำลังฝึกอบรมอยู่ กรุณารอให้เสร็จก่อน!");
-                return;
-            }
-
-            gameState.player.money -= trainingCost;
-            gameState.training.activeTraining = { staffName, skillToTrain };
-            gameState.training.daysRemaining = trainingDuration;
-
-            gameState.player.eventLog.push(`📚 ${staffToTrain.name} ได้รับการฝึกอบรมในทักษะ ${getThaiSkill(skillToTrain)}! ใช้เวลา ${trainingDuration} วัน.`);
-            renderStaffPanel();
-            updateUI();
-        }
-
-        function giveBonus(staffName) {
-            const staff = gameState.employees.find(emp => emp.name === staffName);
-            const bonusCost = 500;
-            if (staff && gameState.player.money >= bonusCost) {
-                gameState.player.money -= bonusCost;
-                staff.morale = Math.min(1, staff.morale + 0.1);
-                gameState.player.eventLog.push(`🎉 จ่ายโบนัสให้ ${staff.name} ทำให้ขวัญกำลังใจเพิ่มขึ้น!`);
-                renderStaffPanel();
-                updateUI();
-            } else {
-                showMessage("เงินไม่พอจ่ายโบนัส!");
-            }
-        }
-        
-        function canMakeMenuItem(menuItem) {
-            const hasRequiredEquipment = menuItem.equipment.every(eqType => 
-                gameState.shop.equipment.some(playerEq => playerEq.name.includes(eqType))
-            );
-            if (!hasRequiredEquipment) {
-                return false;
-            }
-            return menuItem.ingredients.every(requiredIngredient => {
-                const availableIngredient = gameState.shop.inventory.find(inv => inv.name === requiredIngredient.name);
-                return availableIngredient && availableIngredient.stock >= requiredIngredient.quantity;
-            });
-        }
-
-        function getCustomerType() {
-            const rand = Math.random();
-            let cumulativeProbability = 0;
-            for (const customer of customerTypes) {
-                cumulativeProbability += customer.probability;
-                if (rand < cumulativeProbability) {
-                    return customer;
-                }
-            }
-            return customerTypes[0];
-        }
-
-        // --- Modified: sellMenuItem to use staff skills ---
-        function sellMenuItem(itemName) {
-            const itemToSell = gameState.shop.menu.find(item => item.name === itemName);
-            if (!itemToSell) { return; }
-
-            let cogsForThisItem = 0;
-            itemToSell.ingredients.forEach(ingredient => {
-                const invItem = gameState.shop.inventory.find(inv => inv.name === ingredient.name);
-                if (invItem) {
-                    cogsForThisItem += invItem.cost * ingredient.quantity;
-                    invItem.stock -= ingredient.quantity;
-                }
-            });
-            
-            let totalIngredientQuality = itemToSell.ingredients.reduce((sum, ing) => {
-                const invItem = gameState.shop.inventory.find(inv => inv.name === ing.name);
-                return sum + (invItem ? invItem.quality : 0);
-            }, 0);
-            let avgIngredientQuality = totalIngredientQuality / itemToSell.ingredients.length;
-            
-            // --- Use staff barista skill for quality adjustment ---
-            const servingEmployee = gameState.employees[Math.floor(Math.random() * gameState.employees.length)];
-            const effectiveBaristaSkill = servingEmployee.skills.barista * servingEmployee.morale;
-            const finalQuality = avgIngredientQuality * (1 + (effectiveBaristaSkill - 0.5)); // +/- quality
-            
-            const satisfactionChange = (finalQuality * 2) - 1; // Between -1 and 1
-            gameState.shop.customerSatisfaction = Math.max(0, Math.min(1, gameState.shop.customerSatisfaction + (satisfactionChange * 0.05)));
-
-            // Reputation is also affected by quality
-            gameState.shop.reputation = Math.max(0, Math.min(1, gameState.shop.reputation + (satisfactionChange * 0.02)));
-
-            let income = itemToSell.price;
-            let profit = income - cogsForThisItem;
-
-            gameState.player.money += income;
-            gameState.player.finances.salesRevenue += income;
-            gameState.player.finances.cogs += cogsForThisItem;
-            
-            animateCoin(Math.random() * canvas.width, canvas.height, '💰', income);
-        }
-
-        function checkRandomEvent() {
-            // If an event is active, decrease its duration
-            if (gameState.currentEvent && gameState.eventDuration > 0) {
-                gameState.eventDuration--;
-                // --- Fix: Check if event is still active before logging its name
-                if (gameState.eventDuration === 0) {
-                    if (gameState.currentEvent) {
-                        gameState.player.eventLog.push(`✅ เหตุการณ์: "${gameState.currentEvent.name}" สิ้นสุดลงแล้ว!`);
-                    }
-                    gameState.currentEvent = null; // Event ends
-                }
-            }
-
-            // If no event is active, check for a new one
-            if (!gameState.currentEvent) {
-                const rand = Math.random();
-                let cumulativeProbability = 0;
-                for (const event of gameEvents) {
-                    cumulativeProbability += event.probability;
-                    if (rand < cumulativeProbability) {
-                        gameState.currentEvent = event;
-                        gameState.eventDuration = event.duration;
-                        gameState.player.eventLog.push(`🔔 เหตุการณ์ใหม่: "${event.name}" - ${event.description}`);
-                        break;
-                    }
-                }
-            }
-        }
-
-        function goNextDay() {
-            checkRandomEvent();
-            currentSupplierPrices = getSupplierPrices();
-
-            gameState.player.day++;
-            gameState.player.daysInMonth++;
-            if (gameState.player.daysInMonth > 30) {
-                gameState.player.daysInMonth = 1;
-            }
-
-            // Check for R&D completion
-            if (gameState.research && gameState.research.activeProject) {
-                gameState.research.daysRemaining--;
-                if (gameState.research.daysRemaining <= 0) {
-                    const project = gameState.research.activeProject;
-                    if (project.effect.type === "unlock_menu") {
-                        gameState.shop.menu.push(project.effect.menuItem);
-                        gameState.player.eventLog.push(`✨ วิจัย ${project.name} เสร็จสมบูรณ์! ปลดล็อกเมนูใหม่แล้ว!`);
-                    } else if (project.effect.type === "staff_skill_up") {
-                        // This effect is now obsolete with the new training system. Keeping it for backward compatibility
-                        gameState.player.eventLog.push(`✨ วิจัย ${project.name} เสร็จสมบูรณ์! พนักงานได้รับทักษะการตลาดเพิ่มขึ้น!`);
-                        const researchProject = gameState.research.projects.find(p => p.name === project.name);
-                        if (researchProject) {
-                            researchProject.unlocked = true;
-                        }
-                    } else if (project.effect.type === "unlock_training") {
-                        // The unlock training is now tied to a flag on the project itself
-                        const researchProject = gameState.research.projects.find(p => p.name === project.name);
-                        if (researchProject) {
-                             researchProject.unlocked = true;
-                        }
-                        gameState.player.eventLog.push(`✨ วิจัย ${project.name} เสร็จสมบูรณ์! ตอนนี้สามารถฝึกอบรมทักษะ ${getThaiSkill(project.effect.skillToTrain)} ได้แล้ว.`);
-                    }
-                    gameState.research.activeProject = null;
-                }
-            }
-
-            // --- New: Check for staff training completion ---
-            if (gameState.training.activeTraining) {
-                gameState.training.daysRemaining--;
-                if (gameState.training.daysRemaining <= 0) {
-                    const { staffName, skillToTrain } = gameState.training.activeTraining;
-                    const staff = gameState.employees.find(emp => emp.name === staffName);
-                    if (staff) {
-                        staff.skills[skillToTrain] = Math.min(1, staff.skills[skillToTrain] + 0.15); // Increase skill
-                        gameState.player.eventLog.push(`🎉 ${staffName} ฝึกอบรมทักษะ ${getThaiSkill(skillToTrain)} เสร็จสมบูรณ์แล้ว!`);
-                    }
-                    gameState.training.activeTraining = null;
-                }
-            }
-
-            gameState.player.finances.salesRevenue = 0;
-            gameState.player.finances.cogs = 0;
-            gameState.player.finances.operatingExpenses = 0;
-
-            // --- New: Morale changes based on days worked ---
-            gameState.employees.forEach(emp => {
-                const moraleChange = (Math.random() - 0.5) * 0.05;
-                emp.morale = Math.max(0.5, Math.min(1, emp.morale + moraleChange));
-            });
-            
-            // Generate customers for the day based on customer types
-            let dailyCustomerBase = Math.floor(gameState.shop.reputation * 100) + Math.floor(Math.random() * 20);
-            let customerDistribution = {};
-            for (let i = 0; i < dailyCustomerBase; i++) {
-                const customer = getCustomerType();
-                if (customerDistribution[customer.name]) {
-                    customerDistribution[customer.name]++;
-                } else {
-                    customerDistribution[customer.name] = 1;
-                }
-            }
-            
-            let totalSalesCount = 0;
-            for (const customerType in customerDistribution) {
-                const customer = customerTypes.find(c => c.name === customerType);
-                let salesMultiplier = 1;
-                if (gameState.currentEvent && gameState.currentEvent.effect.customerMultiplier) {
-                    salesMultiplier *= gameState.currentEvent.effect.customerMultiplier;
-                }
-                
-                const customersForType = customerDistribution[customerType];
-                for (let i = 0; i < customersForType * salesMultiplier; i++) {
-                    const availableForSale = gameState.shop.menu.filter(item => {
-                        const hasRequiredEquipment = item.equipment.every(eqType => 
-                            gameState.shop.equipment.some(playerEq => playerEq.name.includes(eqType))
-                        );
-                        const hasIngredients = item.ingredients.every(requiredIngredient => {
-                            const availableIngredient = gameState.shop.inventory.find(inv => inv.name === requiredIngredient.name);
-                            return availableIngredient && availableIngredient.stock >= requiredIngredient.quantity;
-                        });
-                        return hasRequiredEquipment && hasIngredients;
+                // ตรวจสอบว่ามีข้อมูลและจำนวนคอลัมน์ตรงกัน
+                if (values && values.length === HEADERS.length) {
+                    const entry = {};
+                    values.forEach((value, i) => {
+                        // ลบเครื่องหมายคำพูดคู่ที่อาจมีออก และ trim ช่องว่าง
+                        entry[HEADERS[i]] = value.replace(/^"|"$/g, '').trim();
                     });
-                    
-                    if (availableForSale.length > 0) {
-                        let itemToSell = availableForSale[Math.floor(Math.random() * availableForSale.length)];
-                        // Apply customer preference logic
-                        let preferredItems = availableForSale.filter(item => customer.preference.some(pref => item.name.includes(pref) || (item.tags && item.tags.includes(pref))));
-                        if (preferredItems.length > 0) {
-                            itemToSell = preferredItems[Math.floor(Math.random() * preferredItems.length)];
-                        }
-                        // Apply event-based preferences
-                        if (gameState.currentEvent) {
-                            if (gameState.currentEvent.effect.coldDrinkMultiplier && itemToSell.name.includes('เย็น')) {
-                                itemToSell = availableForSale.find(item => item.name.includes('เย็น')) || itemToSell;
-                            }
-                            if (gameState.currentEvent.effect.hotDrinkMultiplier && itemToSell.name.includes('ร้อน')) {
-                                 itemToSell = availableForSale.find(item => item.name.includes('ร้อน')) || itemToSell;
-                            }
-                        }
+                    data.push(entry);
+                }
+            });
+            return data;
+        }
+
+        // ฟังก์ชันสำหรับสร้าง HTML และแสดงผล
+        function renderVocabulary(vocabularyData) {
+            const container = document.getElementById(VOCAB_CONTAINER_ID);
+            if (!container) return;
+
+            // ล้างเนื้อหาเดิม (Loading text)
+            container.innerHTML = '';
+            
+            let htmlContent = '';
+            
+            vocabularyData.forEach(item => {
+                // สร้าง HTML สำหรับคำศัพท์แต่ละรายการ
+                htmlContent += `
+                    <div class="vocabulary-item">
+                        <div class="word-title">${item.word_name || ''}</div>
+                        <div class="pronunciation">${item.word_ipa ? `/ ${item.word_ipa} /` : ''}</div>
+                        <div class="meaning">${item.word_meaning || ''}</div>
                         
-                        sellMenuItem(itemToSell.name);
-                        totalSalesCount++;
-                    }
-                }
-            }
-            
-            let dailyExpenses = gameState.player.dailyRent;
-            gameState.player.loan.dailyInterest = Math.round(gameState.player.loan.amount * gameState.player.loan.interestRate / 30);
-            dailyExpenses += gameState.player.loan.dailyInterest;
-
-            // --- New: Marketing effectiveness depends on marketing skill of staff ---
-            const totalMarketingSkill = gameState.employees.reduce((sum, emp) => sum + (emp.skills.marketing || 0) * emp.morale, 0);
-            gameState.shop.customerSatisfaction += gameState.shop.marketingBudget * 0.0001 * (1 + totalMarketingSkill);
-            gameState.shop.reputation += gameState.shop.marketingBudget * 0.0001 * (1 + totalMarketingSkill);
-            
-            if (gameState.shop.customerSatisfaction > 1) gameState.shop.customerSatisfaction = 1;
-            if (gameState.shop.reputation > 1) gameState.shop.reputation = 1;
-            
-            gameState.player.money -= gameState.shop.marketingBudget;
-            dailyExpenses += gameState.shop.marketingBudget;
-            gameState.shop.marketingBudget = 0;
-
-            if (gameState.player.daysInMonth === 1) {
-                const totalWages = gameState.employees.reduce((acc, emp) => acc + emp.wage, 0);
-                dailyExpenses += totalWages;
-                gameState.player.eventLog.push(`💰 จ่ายค่าจ้างพนักงาน: ${totalWages.toLocaleString()} บาท.`);
-            }
-
-            gameState.player.finances.operatingExpenses = dailyExpenses;
-            gameState.player.money -= dailyExpenses;
-            
-            gameState.player.finances.grossProfit = gameState.player.finances.salesRevenue - gameState.player.finances.cogs;
-            gameState.player.finances.netProfit = gameState.player.finances.grossProfit - gameState.player.finances.operatingExpenses;
-
-            gameState.player.finances.inventoryValue = gameState.shop.inventory.reduce((sum, item) => sum + (item.stock * item.cost), 0);
-            gameState.player.finances.totalAssets = gameState.player.money + gameState.player.finances.inventoryValue;
-
-            gameState.player.eventLog.push(`☀️ วันที่ ${gameState.player.day} สิ้นสุดลง. ยอดขาย: ${totalSalesCount} รายการ. รายได้สุทธิ: ${gameState.player.finances.netProfit.toLocaleString()} บาท.`);
-
-            if (gameState.player.money <= 0) {
-                showMessage("คุณล้มละลายแล้ว! เกมโอเวอร์.");
-                resetGame();
-                return;
-            }
-
-            updateUI();
-            drawCanvas();
-        }
-        
-        function resetGame() {
-            gameState = JSON.parse(JSON.stringify(initialGameState));
-            updateUI();
-        }
-
-        // --- Panel Functions ---
-        function renderPricePanel() {
-            menuItemSelect.innerHTML = '';
-            gameState.shop.menu.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.name;
-                option.textContent = `${item.name} (ราคาปัจจุบัน: ${item.price.toLocaleString()} บาท)`;
-                menuItemSelect.appendChild(option);
-            });
-            const selectedItem = gameState.shop.menu.find(item => item.name === menuItemSelect.value);
-            if (selectedItem) {
-                newPriceInput.value = selectedItem.price;
-            }
-        }
-        function renderBuyPanel() {
-            buyItemTableBody.innerHTML = '';
-            let totalCost = 0;
-            
-            buyableProducts.forEach(product => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-700';
-                const currentStock = gameState.shop.inventory.find(item => item.name === product.name)?.stock || 0;
-                const cost = currentSupplierPrices[product.name].price;
-                const quality = currentSupplierPrices[product.name].quality;
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${product.name} (คุณภาพ ${(quality*100).toFixed(0)}%)</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${cost.toLocaleString()} บาท</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${currentStock} หน่วย</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <input type="number" data-name="${product.name}" data-cost="${cost}" data-quality="${quality}" min="0" value="0" class="w-20 p-1 bg-gray-600 rounded-md text-center text-gray-100 quantity-input">
-                    </td>
-                `;
-                buyItemTableBody.appendChild(row);
-            });
-            buyItemTableBody.addEventListener('input', (e) => {
-                if (e.target.classList.contains('quantity-input')) {
-                    totalCost = 0;
-                    buyItemTableBody.querySelectorAll('.quantity-input').forEach(input => {
-                        totalCost += parseInt(input.dataset.cost) * parseInt(input.value);
-                    });
-                    payBtn.textContent = `ชำระเงิน (${totalCost.toLocaleString()} บาท)`;
-                }
-            });
-            payBtn.addEventListener('click', () => {
-                if (gameState.player.money < totalCost) {
-                    showMessage("เงินไม่พอ!");
-                    return;
-                }
-                buyItemTableBody.querySelectorAll('.quantity-input').forEach(input => {
-                    const quantity = parseInt(input.value);
-                    if (quantity > 0) {
-                        buyItem(input.dataset.name, parseInt(input.dataset.cost), quantity, parseFloat(input.dataset.quality));
-                    }
-                });
-                gameState.player.eventLog.push(`🛒 ซื้อวัตถุดิบรวมเป็นเงิน ${totalCost.toLocaleString()} บาท`);
-                hidePanel(buyPanel);
-                updateUI();
-            });
-        }
-        function renderEquipmentPanel() {
-            equipmentItemTableBody.innerHTML = '';
-            availableEquipment.forEach(eq => {
-                const hasEquipment = gameState.shop.equipment.some(playerEq => playerEq.name === eq.name);
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-700';
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">${eq.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${eq.cost.toLocaleString()} บาท</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm ${hasEquipment ? 'text-green-400' : 'text-red-400'}">${hasEquipment ? 'มีแล้ว' : 'ยังไม่มี'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button class="buy-eq-btn px-4 py-2 rounded-lg font-bold text-white transition-colors duration-200 ${hasEquipment || gameState.player.money < eq.cost ? 'bg-gray-500 cursor-not-allowed' : 'bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700'}" data-name="${eq.name}" ${hasEquipment || gameState.player.money < eq.cost ? 'disabled' : ''}>
-                            ซื้อ
-                        </button>
-                    </td>
-                `;
-                equipmentItemTableBody.appendChild(row);
-            });
-            equipmentItemTableBody.querySelectorAll('.buy-eq-btn').forEach(btn => {
-                btn.addEventListener('click', () => buyEquipment(btn.dataset.name));
-            });
-        }
-        // --- Modified: Render Staff Panel to show new skills and training ---
-        function renderStaffPanel() {
-            staffTableBody.innerHTML = '';
-            document.getElementById('staff-count').textContent = gameState.employees.length;
-            gameState.employees.forEach(staff => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-700';
-                
-                const skillsHtml = Object.entries(staff.skills).map(([key, value]) => `
-                    <p class="text-xs text-gray-400">${getThaiSkill(key)}: ${(value*100).toFixed(0)}%</p>
-                `).join('');
-
-                const isTraining = gameState.training.activeTraining?.staffName === staff.name;
-                const trainingBtnClass = isTraining ? 'bg-gray-500 cursor-not-allowed' : 'bg-gradient-to-br from-indigo-500 to-blue-600';
-                const trainingBtnText = isTraining ? `กำลังฝึกอบรม (${gameState.training.daysRemaining} วัน)` : 'ฝึกอบรม';
-                
-                // Get available skills from research projects that are unlocked
-                const unlockedTrainingSkills = gameState.research.projects
-                    .filter(p => p.unlocked && p.effect?.type === "unlock_training")
-                    .map(p => p.effect.skillToTrain);
-
-                const trainingDropdown = `
-                    <select class="p-1 text-xs bg-gray-600 rounded-md text-gray-100">
-                        ${unlockedTrainingSkills.map(skill => `<option value="${skill}">${getThaiSkill(skill)}</option>`).join('')}
-                    </select>
-                `;
-
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">${staff.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${staff.wage.toLocaleString()} บาท</td>
-                    <td class="px-6 py-4 text-sm text-gray-300">
-                        ${skillsHtml}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${(staff.morale * 100).toFixed(0)}%</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex flex-col gap-2">
-                        <div class="flex gap-2 items-center">
-                            ${trainingDropdown}
-                            <button class="train-staff-btn px-2 py-1 rounded-lg font-bold text-white text-xs transition-colors duration-200 ${trainingBtnClass}" data-name="${staff.name}" ${isTraining || unlockedTrainingSkills.length === 0 ? 'disabled' : ''}>
-                                ${trainingBtnText}
-                            </button>
-                        </div>
-                        <div class="flex gap-2">
-                            <button class="bonus-staff-btn flex-1 px-2 py-1 rounded-lg font-bold text-white text-xs transition-colors duration-200 bg-gradient-to-br from-green-500 to-emerald-600" data-name="${staff.name}">
-                                โบนัส
-                            </button>
-                            <button class="fire-staff-btn flex-1 px-2 py-1 rounded-lg font-bold text-white text-xs transition-colors duration-200 bg-gradient-to-br from-red-500 to-rose-600" data-name="${staff.name}">
-                                ไล่ออก
-                            </button>
-                        </div>
-                    </td>
-                `;
-                staffTableBody.appendChild(row);
-            });
-            staffTableBody.querySelectorAll('.fire-staff-btn').forEach(btn => {
-                btn.addEventListener('click', () => fireStaff(btn.dataset.name));
-            });
-            // --- MODIFIED: Added confirmation for training and bonus ---
-            staffTableBody.querySelectorAll('.train-staff-btn').forEach(btn => {
-                const staffName = btn.dataset.name;
-                const skillDropdown = btn.parentElement.querySelector('select');
-                if (btn.disabled) return;
-                btn.addEventListener('click', () => {
-                    const skillToTrain = skillDropdown.value;
-                    const confirmationMessage = `คุณต้องการฝึกอบรมทักษะ ${getThaiSkill(skillToTrain)} ให้กับ ${staffName} หรือไม่?`;
-                    showConfirmation(confirmationMessage, () => {
-                        trainStaff(staffName, skillToTrain);
-                    });
-                });
-            });
-            staffTableBody.querySelectorAll('.bonus-staff-btn').forEach(btn => {
-                const staffName = btn.dataset.name;
-                btn.addEventListener('click', () => {
-                    const confirmationMessage = `คุณต้องการให้โบนัส ${staffName} เพื่อเพิ่มขวัญกำลังใจหรือไม่?`;
-                    showConfirmation(confirmationMessage, () => {
-                        giveBonus(staffName);
-                    });
-                });
-            });
-        }
-        function getThaiSkill(skill) {
-            switch(skill) {
-                case 'barista': return 'บาริสต้า';
-                case 'speed': return 'ความเร็ว';
-                case 'service': return 'การบริการ';
-                case 'marketing': return 'การตลาด';
-                default: return skill;
-            }
-        }
-        function renderMarketingPanel() {
-            currentMarketingBudget.textContent = gameState.shop.marketingBudget.toLocaleString();
-            marketingSlider.value = gameState.shop.marketingBudget;
-            marketingBudgetDisplay.textContent = gameState.shop.marketingBudget.toLocaleString();
-            marketingSlider.max = gameState.player.money;
-            if (marketingSlider.max < marketingSlider.value) {
-                 marketingSlider.value = marketingSlider.max;
-                 marketingBudgetDisplay.textContent = marketingSlider.value.toLocaleString();
-            }
-        }
-        function renderLoanPanel() {
-            currentLoanAmount.textContent = gameState.player.loan.amount.toLocaleString();
-            dailyLoanInterest.textContent = (gameState.player.loan.amount * gameState.player.loan.interestRate / 30).toFixed(2);
-            loanAmountInput.value = '';
-        }
-
-        function renderReportsPanel() {
-            document.getElementById('sales-revenue').textContent = `${gameState.player.finances.salesRevenue.toLocaleString()} บาท`;
-            document.getElementById('cogs').textContent = `${gameState.player.finances.cogs.toLocaleString()} บาท`;
-            document.getElementById('gross-profit').textContent = `${gameState.player.finances.grossProfit.toLocaleString()} บาท`;
-            document.getElementById('operating-expenses').textContent = `${gameState.player.finances.operatingExpenses.toLocaleString()} บาท`;
-            document.getElementById('net-profit').textContent = `${gameState.player.finances.netProfit.toLocaleString()} บาท`;
-            
-            document.getElementById('assets-cash').textContent = `${gameState.player.money.toLocaleString()} บาท`;
-            document.getElementById('assets-supplies').textContent = `${gameState.player.finances.inventoryValue.toLocaleString()} บาท`;
-            document.getElementById('total-assets').textContent = `${gameState.player.money + gameState.player.finances.inventoryValue.toLocaleString()} บาท`;
-            document.getElementById('liabilities-loan').textContent = `${gameState.player.loan.amount.toLocaleString()} บาท`;
-        }
-
-        function renderResearchPanel() {
-            researchProjectList.innerHTML = '';
-            // --- Fix: Add defensive check for research and projects array
-            if (!gameState.research || !gameState.research.projects) {
-                const p = document.createElement('p');
-                p.textContent = "ไม่พบโครงการวิจัย. กรุณาโหลดเกมใหม่หรือเริ่มเกมใหม่";
-                p.className = "text-center text-red-400";
-                researchProjectList.appendChild(p);
-                return;
-            }
-            
-            gameState.research.projects.forEach(project => {
-                const hasUnlocked = project.effect.type === "unlock_menu" ? gameState.shop.menu.some(menuItem => menuItem.name === project.effect.menuItem?.name) : project.unlocked;
-                const isActive = gameState.research.activeProject?.name === project.name;
-                const projectDiv = document.createElement('div');
-                projectDiv.className = `bg-gray-800 p-4 rounded-lg shadow-md mb-2 flex items-center justify-between transition-colors duration-200 ${isActive ? 'bg-indigo-900' : ''}`;
-                
-                let buttonHtml = '';
-                if (hasUnlocked) {
-                    buttonHtml = `<span class="text-green-400 font-bold">ปลดล็อกแล้ว</span>`;
-                } else if (isActive) {
-                    buttonHtml = `<span class="text-yellow-400 font-bold">กำลังวิจัย (${gameState.research.daysRemaining} วัน)</span>`;
-                } else {
-                    buttonHtml = `<button class="start-research-btn btn bg-gradient-to-br from-indigo-500 to-blue-600 py-2 px-4 text-base" data-name="${project.name}" data-cost="${project.cost}">เริ่มวิจัย</button>`;
-                }
-                
-                projectDiv.innerHTML = `
-                    <div>
-                        <h4 class="text-lg font-bold text-teal-400">${project.name}</h4>
-                        <p class="text-sm text-gray-300">ค่าใช้จ่าย: ${project.cost.toLocaleString()} บาท</p>
-                        <p class="text-sm text-gray-300">ใช้เวลา: ${project.daysToComplete} วัน</p>
-                    </div>
-                    <div>
-                        ${buttonHtml}
+                        ${item.word_sen1 ? `<div class="example">${item.word_sen1}</div>` : ''}
+                        ${item.word_sentr1 ? `<p class="example-thai">(${item.word_sentr1})</p>` : ''}
+                        
+                        ${item.word_sen2 ? `<div class="example">${item.word_sen2}</div>` : ''}
+                        ${item.word_sentr2 ? `<p class="example-thai">(${item.word_sentr2})</p>` : ''}
                     </div>
                 `;
-                researchProjectList.appendChild(projectDiv);
             });
 
-            researchProjectList.querySelectorAll('.start-research-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const projectName = btn.dataset.name;
-                    const cost = parseInt(btn.dataset.cost);
-                    const project = gameState.research.projects.find(p => p.name === projectName);
-                    
-                    if (gameState.research.activeProject) {
-                        showMessage("มีโครงการวิจัยอื่นกำลังดำเนินการอยู่");
-                        return;
-                    }
-                    if (gameState.player.money < cost) {
-                        showMessage("เงินไม่พอสำหรับค่าวิจัย!");
-                        return;
-                    }
+            // ตรวจสอบว่ามีข้อมูลหรือไม่
+            if (vocabularyData.length === 0) {
+                htmlContent = '<p class="loading-text" style="color: #e53e3e;">ไม่พบคำศัพท์ใน Google Sheet หรือรูปแบบข้อมูลไม่ถูกต้อง</p>';
+            }
 
-                    gameState.player.money -= cost;
-                    gameState.research.activeProject = project;
-                    gameState.research.daysRemaining = project.daysToComplete;
-                    gameState.player.eventLog.push(`🧪 เริ่มต้นวิจัย: "${project.name}"`);
-                    
-                    renderResearchPanel();
-                    updateUI();
-                });
-            });
+            // แทรก HTML เข้าไปใน DOM
+            container.innerHTML = htmlContent;
         }
 
-
-        // --- Canvas Drawing Functions ---
-        let particles = [];
-        function drawCanvas() {
-            // Clear canvas
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#4A5568';
-            ctx.fillRect(50, canvas.height - 200, canvas.width - 100, 150);
-            ctx.fillStyle = '#E2E8F0';
-            ctx.fillRect(80, canvas.height - 180, 50, 50);
-            ctx.fillRect(canvas.width - 130, canvas.height - 180, 50, 50);
-            
-            ctx.fillStyle = '#CBD5E0';
-            ctx.font = '24px Poppins';
-            ctx.textAlign = 'center';
-            ctx.fillText('☕️ Coffee Shop ☕️', canvas.width / 2, canvas.height / 2);
-            ctx.fillText(`ชื่อเสียง: ${(gameState.shop.reputation * 100).toFixed(0)}%`, canvas.width / 2, canvas.height / 2 + 40);
-            if (gameState.currentEvent) {
-                ctx.fillStyle = '#FBBF24';
-                ctx.font = '20px Poppins';
-                ctx.fillText(`📢 เหตุการณ์: ${gameState.currentEvent.name}`, canvas.width / 2, canvas.height / 2 + 80);
-            }
-            if (gameState.research && gameState.research.activeProject) {
-                ctx.fillStyle = '#6EE7B7';
-                ctx.font = '16px Poppins';
-                ctx.fillText(`🧪 กำลังวิจัย: ${gameState.research.activeProject.name} (${gameState.research.daysRemaining} วัน)`, canvas.width / 2, canvas.height / 2 + 120);
-            }
-            if (gameState.training.activeTraining) {
-                ctx.fillStyle = '#6EE7B7';
-                ctx.font = '16px Poppins';
-                ctx.fillText(`📚 กำลังฝึกอบรม: ${gameState.training.activeTraining.staffName} (${gameState.training.daysRemaining} วัน)`, canvas.width / 2, canvas.height / 2 + 160);
-            }
-
-            // Draw particles (coins)
-            particles.forEach((p, index) => {
-                ctx.save();
-                ctx.font = '32px Poppins';
-                ctx.textAlign = 'center';
-                ctx.fillStyle = 'gold';
-                ctx.fillText(p.text, p.x, p.y);
-                ctx.restore();
-                p.y -= p.speed;
-                p.opacity -= 0.01;
-                if (p.opacity < 0) {
-                    particles.splice(index, 1);
+        // ฟังก์ชันหลักในการดึงข้อมูล
+        async function fetchAndRenderVocabulary() {
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            });
+                const csvText = await response.text();
+                
+                const vocabularyData = parseCSV(csvText);
+                
+                renderVocabulary(vocabularyData);
+
+            } catch (error) {
+                console.error("Error fetching or parsing CSV:", error);
+                const container = document.getElementById(VOCAB_CONTAINER_ID);
+                if (container) {
+                    container.innerHTML = `<p class="loading-text" style="color: #e53e3e;">เกิดข้อผิดพลาดในการโหลดข้อมูล: ${error.message}</p>`;
+                }
+            }
         }
-        function animateCoin(x, y, text, value) {
-            particles.push({
-                x: x,
-                y: y,
-                text: `${text} +${value.toLocaleString()}`,
-                speed: Math.random() * 2 + 1,
-                opacity: 1
-            });
-        }
-        
-        function gameLoop() {
-            drawCanvas();
-            requestAnimationFrame(gameLoop);
-        }
-        gameLoop(); // Start the animation loop
 
-        // --- Event Listeners ---
-        document.getElementById('set-price-btn').addEventListener('click', () => {
-            renderPricePanel();
-            showPanel(pricePanel);
-        });
-        document.getElementById('buy-raw-btn').addEventListener('click', () => {
-            renderBuyPanel();
-            showPanel(buyPanel);
-        });
-        document.getElementById('buy-equipment-btn').addEventListener('click', () => {
-            renderEquipmentPanel();
-            showPanel(equipmentPanel);
-        });
-        document.getElementById('hire-staff-btn').addEventListener('click', () => {
-            renderStaffPanel();
-            showPanel(hireStaffPanel);
-        });
-        document.getElementById('marketing-btn').addEventListener('click', () => {
-            renderMarketingPanel();
-            showPanel(marketingPanel);
-        });
-        document.getElementById('loan-btn').addEventListener('click', () => {
-            renderLoanPanel();
-            showPanel(loanPanel);
-        });
-        document.getElementById('reports-btn').addEventListener('click', () => {
-            renderReportsPanel();
-            showPanel(reportsPanel);
-        });
-        document.getElementById('research-btn').addEventListener('click', () => {
-            renderResearchPanel();
-            showPanel(researchPanel);
-        });
-        document.getElementById('hire-new-staff-btn').addEventListener('click', hireStaff);
-
-
-        confirmPriceBtn.addEventListener('click', () => {
-            const selectedName = menuItemSelect.value;
-            const newPrice = parseInt(newPriceInput.value);
-            if (!selectedName || isNaN(newPrice) || newPrice < 0) {
-                showMessage('ราคาไม่ถูกต้อง');
-                return;
+        // ใช้ DOMContentLoaded เพื่อให้แน่ใจว่าปุ่มพร้อมใช้งานทันที
+        document.addEventListener('DOMContentLoaded', function() {
+            // ตั้งค่าปุ่มสร้าง PDF/พิมพ์
+            const printButton = document.getElementById('printPdfButton');
+            if (printButton) {
+                printButton.addEventListener('click', () => {
+                    // ใช้ฟังก์ชันพิมพ์ของเบราว์เซอร์
+                    window.print(); 
+                });
             }
-            const itemToUpdate = gameState.shop.menu.find(item => item.name === selectedName);
-            if (itemToUpdate) {
-                itemToUpdate.price = newPrice;
-                gameState.player.eventLog.push(`ราคาของ ${selectedName} ถูกเปลี่ยนเป็น ${newPrice.toLocaleString()} บาท.`);
-            }
-            hidePanel(pricePanel);
-            updateUI();
+            // เริ่มดึงข้อมูล
+            fetchAndRenderVocabulary();
         });
-        cancelPriceBtn.addEventListener('click', () => hidePanel(pricePanel));
-        cancelBuyBtn.addEventListener('click', () => hidePanel(buyPanel));
-        cancelEquipmentBtn.addEventListener('click', () => hidePanel(equipmentPanel));
-        cancelStaffBtn.addEventListener('click', () => hidePanel(hireStaffPanel));
-        cancelMarketingBtn.addEventListener('click', () => hidePanel(marketingPanel));
-        cancelLoanBtn.addEventListener('click', () => hidePanel(loanPanel));
-        cancelReportsBtn.addEventListener('click', () => hidePanel(reports-panel));
-        cancelResearchBtn.addEventListener('click', () => hidePanel(researchPanel));
-
-
-        marketingSlider.addEventListener('input', () => {
-            marketingBudgetDisplay.textContent = marketingSlider.value.toLocaleString();
-        });
-        confirmMarketingBtn.addEventListener('click', () => {
-            const budget = parseInt(marketingSlider.value);
-            if (gameState.player.money < budget) {
-                showMessage("เงินทุนไม่พอสำหรับค่าการตลาด!");
-                return;
-            }
-            gameState.shop.marketingBudget = budget;
-            gameState.player.eventLog.push(`ใช้เงิน ${budget.toLocaleString()} บาททำการตลาดวันนี้.`);
-            hidePanel(marketingPanel);
-            updateUI();
-        });
-
-        requestLoanBtn.addEventListener('click', () => {
-            const loanAmount = parseInt(loanAmountInput.value);
-            if (isNaN(loanAmount) || loanAmount <= 0) {
-                showMessage("จำนวนเงินไม่ถูกต้อง!");
-                return;
-            }
-            gameState.player.money += loanAmount;
-            gameState.player.loan.amount += loanAmount;
-            gameState.player.eventLog.push(`กู้เงินสำเร็จ! ได้รับ ${loanAmount.toLocaleString()} บาท.`);
-            hidePanel(loanPanel);
-            updateUI();
-        });
-
-        document.getElementById('next-day-btn').addEventListener('click', goNextDay);
-        document.getElementById('save-game-btn').addEventListener('click', saveGame);
-        document.getElementById('load-game-btn').addEventListener('click', loadGame);
-
-        // Initial setup
-        window.onload = () => {
-            loadGame();
-            drawCanvas();
-        };
 
     </script>
 </body>
