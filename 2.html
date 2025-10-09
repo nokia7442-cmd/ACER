@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชีทสรุปคำศัพท์รวม (PDF with Bookmarks)</title>
+    <!-- โหลดฟอนต์ Sarabun จาก Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <!-- โหลด html2pdf.js ซึ่งรวม jsPDF ไว้แล้ว -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* CSS หลัก */
+        body {
+            /* เปลี่ยนเป็น Sarabun */
+            font-family: 'Sarabun', 'Inter', Arial, sans-serif;
+            line-height: 1.7; /* เพิ่ม line-height เพื่อให้อ่านง่ายขึ้น */
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            color: #333;
+            background-color: #f7f7f7;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .title-input-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9eefc; 
+            border: 1px solid #c3dafe;
+            border-radius: 8px;
+        }
+        .input-label {
+            display: block;
+            /* เพิ่มขนาด */
+            font-size: 16px; 
+            font-weight: 600;
+            color: #4c51bf; 
+            margin-bottom: 5px;
+        }
+        .input-full-width { 
+            width: 100%;
+            padding: 10px; /* เพิ่ม padding */
+            border: 1px solid #a0aec0;
+            border-radius: 4px;
+            /* เพิ่มขนาด */
+            font-size: 18px; 
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .header-section {
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea; 
+            margin-bottom: 25px;
+        }
+
+        .header-section h1 {
+            /* เพิ่มขนาด */
+            font-size: 32px; 
+            font-weight: 700;
+            margin-bottom: 0px;
+            color: #4a5568;
+        }
+        .header-section p {
+            /* เพิ่มขนาด */
+            font-size: 20px; 
+            margin-top: 5px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .group-header {
+            margin-top: 35px; /* เพิ่มระยะห่าง */
+            margin-bottom: 25px; /* เพิ่มระยะห่าง */
+            padding: 12px 18px; /* เพิ่ม padding */
+            border-left: 6px solid #d53f8c; /* เพิ่มความหนาขอบ */
+            background-color: #fce7f6; 
+            border-radius: 4px;
+        }
+        .group-header h2 {
+            /* เพิ่มขนาด */
+            font-size: 24px; 
+            font-weight: 700;
+            color: #805ad5; 
+            margin: 0;
+        }
+        .group-header p {
+            /* เพิ่มขนาด */
+            font-size: 17px; 
+            color: #718096;
+            margin: 0;
+            margin-top: 3px;
+            font-weight: 700; /* ทำให้ word_cate2 เป็นตัวหนา */
+        }
+
+        .vocabulary-item {
+            margin-bottom: 30px; /* เพิ่มระยะห่าง */
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 18px; /* เพิ่ม padding */
+            transition: transform 0.2s;
+        }
+        
+        /* word_name - ไม่เพิ่มขนาดตามที่ร้องขอ (ปรับจาก 22px เป็น 24px เพื่อให้เข้ากับ Header ที่ใหญ่ขึ้น) */
+        .word-title {
+            font-size: 24px; 
+            font-weight: 800;
+            color: #805ad5; 
+            margin-bottom: 4px;
+        }
+        
+        .pronunciation {
+            /* เพิ่มขนาด */
+            font-size: 16px; 
+            color: #718096; 
+            margin-bottom: 12px; 
+            font-weight: 500;
+        }
+        
+        .meaning {
+            /* เพิ่มขนาด */
+            font-size: 22px; 
+            font-weight: 700;
+            color: #2d3748; 
+            margin-top: 0px; 
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .example-pair {
+             margin-bottom: 12px; 
+             border-left: 4px solid #667eea; /* เพิ่มความหนาขอบ */
+             padding-left: 12px;
+        }
+
+        .example {
+            font-style: italic;
+            margin-bottom: 3px;
+            /* เพิ่มขนาด */
+            font-size: 18px; 
+            color: #2b6cb0;
+        }
+        .example-thai {
+            font-style: normal;
+            /* เพิ่มขนาด */
+            font-size: 16px; 
+            color: #48bb78; 
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-left: 0;
+            border-left: none;
+        }
+
+        .loading-text {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #718096;
+            margin-top: 40px;
+        }
+
+        .print-button-container {
+            text-align: center;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        #printPdfButton1, #printPdfButton2 {
+            padding: 12px 18px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            font-weight: bold;
+        }
+        #printPdfButton1 {
+            background-color: #d53f8c; 
+        }
+        #printPdfButton1:hover {
+            background-color: #c0367d;
+            transform: translateY(-1px);
+        }
+        #printPdfButton2 {
+            background-color: #3182ce; 
+        }
+        #printPdfButton2:hover {
+            background-color: #2c5282;
+            transform: translateY(-1px);
+        }
+
+        /* --- CSS Print Media Styles --- */
+        @media print {
+             body {
+                background-color: white !important;
+                box-shadow: none !important;
+                margin: 0;
+                max-width: none;
+                padding: 0;
+                color: black !important;
+                position: relative;
+            }
+            .print-button-container, .title-input-container {
+                display: none !important;
+            }
+
+            /* --- บังคับขึ้นหน้าใหม่ก่อน Group Header ยกเว้นตัวแรก --- */
+            .group-header:not(:first-of-type) {
+                page-break-before: always;
+                margin-top: 0;
+            }
+            /* ----------------------------------------------------------------- */
+
+            /* Watermark Layer (Method 2: Background) */
+            body::after {
+                content: attr(data-watermark-text); 
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+                
+                color: var(--watermark-color-rgba, rgba(0, 0, 0, 0.1)); 
+                font-size: var(--watermark-size-px, 150px); 
+                font-weight: 900;
+                opacity: 1; 
+                pointer-events: none;
+                z-index: -1000; 
+
+                width: 200vw;
+                height: 200vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                white-space: pre;
+
+                background-image: repeating-linear-gradient(
+                    45deg, 
+                    transparent, 
+                    transparent 100px, 
+                    var(--watermark-color-rgba-faint, rgba(245, 245, 245, 0.1)) 101px, 
+                    var(--watermark-color-rgba-faint, rgba(245, 245, 245, 0.1)) 200px
+                );
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="title-input-container">
+        <!-- เพิ่มช่องแก้ไขข้อความลายน้ำ -->
+        <label for="watermarkText" class="input-label">ข้อความลายน้ำ (Watermark Text):</label>
+        <input type="text" id="watermarkText" class="input-full-width" value="PRIVATE DRAFT - ห้ามทำซ้ำ" placeholder="เช่น CONFIDENTIAL">
+
+        <label for="watermarkSize" class="input-label">ขนาดลายน้ำ (Font Size, mm):</label>
+        <input type="number" id="watermarkSize" class="input-full-width" value="50" min="10" max="100">
+
+        <label for="watermarkColor" class="input-label">สีลายน้ำ (RGB: R,G,B):</label>
+        <input type="text" id="watermarkColor" class="input-full-width" value="245, 245, 245" placeholder="เช่น 200, 200, 200">
+        
+        <p style="font-size: 14px; color: #5a67d8; margin-top: 10px;">
+            **ข้อควรระวัง:** วิธีที่ 1 (Bookmark) ลายน้ำอาจทับข้อความ, วิธีที่ 2 (CSS Print) ลายน้ำอยู่ด้านหลัง 100% แต่ไม่มี Bookmark อัตโนมัติ
+        </p>
+    </div>
+
+    <!-- ส่วนหัวข้อหลัก -->
+    <div class="header-section">
+        <!-- ใช้ h1 นี้เป็นชื่อไฟล์ PDF โดยอัตโนมัติ -->
+        <h1 id="header-title">ชีทสรุปคำศัพท์</h1>
+    </div>
+
+    <!-- ปุ่มสร้าง PDF: มี 2 วิธีให้เลือก -->
+    <div class="print-button-container">
+        <button id="printPdfButton1">วิธีที่ 1: สร้าง PDF พร้อม Bookmark</button>
+        <button id="printPdfButton2">วิธีที่ 2: สร้าง PDF ด้วย CSS Print (ลายน้ำอยู่ด้านหลัง 100%)</button>
+    </div>
+
+    <!-- ส่วนที่จะแสดงคำศัพท์ที่ดึงมาจาก Google Sheet -->
+    <div id="vocabulary-content">
+        <p class="loading-text">กำลังโหลดคำศัพท์...</p>
+    </div>
+
+    <script>
+        // *** แก้ไข: แทนที่ URL นี้ด้วยลิงก์ Google Sheet CSV ที่คุณได้ตั้งค่า "Publish to the web" ไว้จริง ***
+        const ORIGINAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR_jkPuMWbwUrIzyF4FKmBcXWxsdP2mogpDgsOTAjq-ElihbTs9tCy6GyghVaTCAUadbi6KTxUy0arO/pub?gid=331265533&single=true&output=csv'; // URL ตัวอย่างสำหรับโครงสร้างที่ถูกต้อง
+        const CSV_URL = `https://corsproxy.io/?${encodeURIComponent(ORIGINAL_CSV_URL)}`;
+        const VOCAB_CONTAINER_ID = 'vocabulary-content';
+        
+        // ลบ const WATERMARK_TEXT ออก และใช้ค่าจาก input แทน
+        
+        const HEADERS = [
+            'word_name', 'word_ipa', 'word_meaning', 'word_sen2', 'word_sentr2', 
+            'word_sen1', 'word_sentr1', 'word_cate1', 'word_cate2'
+        ];
+
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split(/\r?\n/);
+            const dataLines = lines.slice(1); 
+            const groupedData = {};
+
+            dataLines.forEach((line) => {
+                const values = line.split(','); 
+                if (values && values.length === HEADERS.length) {
+                    const entry = {};
+                    values.forEach((value, i) => {
+                        // Cleanup values: remove leading/trailing quotes and trim spaces
+                        entry[HEADERS[i]] = value.replace(/^"|"$/g, '').trim(); 
+                    });
+                    
+                    const cate1 = entry.word_cate1 || 'Uncategorized';
+                    const groupKey = cate1; 
+
+                    if (!groupedData[groupKey]) {
+                        groupedData[groupKey] = {
+                            cate1: cate1,
+                            cate2: entry.word_cate2 || 'ไม่จัดหมวดหมู่',
+                            words: []
+                        };
+                    }
+                    
+                    if (entry.word_name) {
+                        groupedData[groupKey].words.push(entry);
+                    }
+                } 
+            });
+            return { groupedVocabulary: groupedData }; 
+        }
+
+        function renderVocabulary(data) {
+            const groupedVocabulary = data.groupedVocabulary;
+            const container = document.getElementById(VOCAB_CONTAINER_ID);
+            if (!container) return;
+
+            container.innerHTML = ''; 
+            
+            let htmlContent = '';
+            let groupCount = 0;
+
+            for (const groupKey in groupedVocabulary) {
+                const group = groupedVocabulary[groupKey];
+                if (group.words.length > 0) {
+                    groupCount++;
+                    
+                    // เพิ่มตัวนับ local สำหรับกลุ่มนี้ (รีเซ็ตทุกครั้งที่ขึ้นกลุ่มใหม่)
+                    let localWordIndex = 1; 
+                    
+                    const cate1 = group.cate1;
+                    const cate2 = group.cate2;
+                    
+                    const rawId = groupKey.replace(/\s+/g, '_').toLowerCase();
+                    const safeId = rawId.replace(/[^a-z0-9_]/g, '').substring(0, 50);
+
+                    // 2.1. Render Group Header
+                    htmlContent += `
+                        <div class="group-header">
+                            <h2 class="pdf-section-header" id="${safeId}">${cate1 || 'Uncategorized'}</h2>
+                            <p><strong>${cate2 || 'ไม่จัดหมวดหมู่'}</strong></p>
+                        </div>
+                    `;
+
+                    // 2.2. Render words in the group
+                    group.words.forEach(item => {
+                        htmlContent += `
+                            <div class="vocabulary-item">
+                                <!-- ใช้ localWordIndex สำหรับการนับต่อกลุ่ม -->
+                                <div class="word-title">${localWordIndex++}. ${item.word_name || ''}</div>
+                                <div class="pronunciation">/ ${item.word_ipa || ''} /</div>
+                                <div class="meaning">${item.word_meaning || ''}</div>
+                                ${item.word_sen1 ? `
+                                    <div class="example-pair">
+                                        <!-- เพิ่มเลข 1. นำหน้า word_sen1 -->
+                                        <div class="example">1. ${item.word_sen1}</div>
+                                        ${item.word_sentr1 ? `<div class="example-thai">(${item.word_sentr1})</div>` : ''}
+                                    </div>
+                                ` : ''}
+                                ${item.word_sen2 ? `
+                                    <div class="example-pair" style="margin-top: 10px;">
+                                        <!-- เพิ่มเลข 2. นำหน้า word_sen2 -->
+                                        <div class="example">2. ${item.word_sen2}</div>
+                                        ${item.word_sentr2 ? `<div class="example-thai">(${item.word_sentr2})</div>` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            if (groupCount === 0) {
+                htmlContent = '<p class="loading-text" style="color: #e53e3e;">ไม่พบคำศัพท์ใน Google Sheet หรือรูปแบบข้อมูลไม่ถูกต้อง</p>';
+            }
+
+            container.innerHTML = htmlContent;
+        }
+
+        async function fetchAndRenderVocabulary() {
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const csvText = await response.text();
+                const parsedData = parseCSV(csvText);
+                renderVocabulary(parsedData);
+            } catch (error) {
+                console.error("[Error]: เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+                const container = document.getElementById(VOCAB_CONTAINER_ID);
+                if (container) {
+                    container.innerHTML = `<p class="loading-text" style="color: #e53e3e;">เกิดข้อผิดพลาดในการโหลดข้อมูล: โปรดตรวจสอบว่า ORIGINAL_CSV_URL ถูกต้องและเปิดเผยต่อสาธารณะ (HTTP Status: ${error.message.includes('status:') ? error.message.split('status: ')[1] : 'Unknown'})</p>`;
+                }
+            }
+        }
+        
+        // --- Method 1: HTML2PDF + jsPDF (Protected Bookmark and page breaks) ---
+        function createPdfWithBookmarks() {
+            const contentElement = document.getElementById(VOCAB_CONTAINER_ID);
+            // ใช้ค่าจาก header-title สำหรับชื่อไฟล์และ Bookmark
+            const customTitle = document.getElementById('header-title').textContent.trim() || 'Vocab_Sheet_Bookmark'; 
+            const filename = `${customTitle}.pdf`;
+            
+            // ดึงข้อความลายน้ำจาก input ใหม่
+            const watermarkText = document.getElementById('watermarkText').value.trim() || 'PRIVATE DRAFT';
+
+            const MARGIN_MM = 10;
+            const opt = {
+                margin: [MARGIN_MM, MARGIN_MM, MARGIN_MM, MARGIN_MM], 
+                filename: filename,
+                html2canvas: { scale: 2 }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(contentElement)
+                .toPdf().get('pdf')
+                .then(function(pdf) {
+                
+                    // --- START: Protected Bookmark Logic ---
+                    try {
+                        const outline = pdf.outline; 
+                        const root = outline.add(null, customTitle); 
+                        
+                        const sectionHeaders = document.querySelectorAll('.pdf-section-header');
+                        
+                        // ใช้ index + 1 เป็นเลขหน้า เพราะเราบังคับ page-break-before ไว้แล้ว
+                        sectionHeaders.forEach((header, index) => {
+                            const headerText = header.textContent.trim();
+                            const pageNumber = index + 1; 
+                            
+                            // 10mm คือตำแหน่งบนสุด (ขอบกระดาษ)
+                            outline.add(root, headerText, { 
+                                pageNumber: pageNumber, 
+                                top: MARGIN_MM 
+                            });
+                        });
+                        console.log("PDF Bookmarks created successfully.");
+                    } catch (e) {
+                        // ดักจับข้อผิดพลาด 'objId' เพื่อให้ PDF ยังคงถูกบันทึกได้
+                        console.error("PDF Bookmark generation failed due to a jsPDF internal error (likely 'objId'). PDF will still be saved without bookmarks.", e);
+                    }
+                    // --- END: Protected Bookmark Logic ---
+                    
+                    // Watermark Logic 
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    
+                    const watermarkSize = parseInt(document.getElementById('watermarkSize').value) || 50;
+                    const watermarkColorString = document.getElementById('watermarkColor').value || '245, 245, 245'; 
+                    const [r, g, b] = watermarkColorString.split(',').map(c => parseInt(c.trim()) || 0);
+
+                    pdf.setFontSize(watermarkSize); 
+                    pdf.setTextColor(r, g, b); 
+
+                    try {
+                        pdf.setGState(new pdf.GState({ opacity: 0.2 })); 
+                    } catch (e) {
+                        console.warn("jsPDF GState for Opacity is not available.");
+                    }
+
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight(); 
+                    const x = pageWidth / 2;
+                    const y = pageHeight / 2;
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        
+                        pdf.text(watermarkText, x, y, { // ใช้ watermarkText จาก input
+                            angle: 45, 
+                            align: 'center', 
+                            baseline: 'middle' 
+                        });
+                    }
+
+                    try {
+                        pdf.setGState(new pdf.GState({ opacity: 1.0 })); 
+                    } catch (e) {
+                        // Ignore
+                    }
+                    
+                    pdf.save(filename);
+                    
+                }).catch(error => {
+                    console.error("Error during PDF generation with html2pdf:", error);
+                    alert('เกิดข้อผิดพลาดในการสร้าง PDF (วิธีที่ 1) โปรดตรวจสอบ Console Log');
+                });
+        }
+
+        // --- Method 2: CSS Print Media (Watermark is guaranteed background, but no Bookmark) ---
+        function createPdfWithCssPrint() {
+            const watermarkColorString = document.getElementById('watermarkColor').value || '245, 245, 245'; 
+            const watermarkSize = parseInt(document.getElementById('watermarkSize').value) || 50;
+            const watermarkText = document.getElementById('watermarkText').value.trim() || 'PRIVATE DRAFT'; // ดึงข้อความลายน้ำจาก input ใหม่
+            
+            // แปลง RGB เป็น RGBA
+            const rgbaFaint = `rgba(${watermarkColorString}, 0.2)`; 
+            const rgbaVeryFaint = `rgba(${watermarkColorString}, 0.1)`; 
+            
+            document.documentElement.style.setProperty('--watermark-color-rgba', rgbaFaint);
+            document.documentElement.style.setProperty('--watermark-color-rgba-faint', rgbaVeryFaint);
+            document.documentElement.style.setProperty('--watermark-size-px', `${watermarkSize * 3}px`);
+            document.body.setAttribute('data-watermark-text', watermarkText); // ใช้ watermarkText ใหม่
+            
+            window.print();
+
+            setTimeout(() => {
+                document.body.removeAttribute('data-watermark-text');
+                document.documentElement.style.removeProperty('--watermark-color-rgba');
+                document.documentElement.style.removeProperty('--watermark-color-rgba-faint');
+                document.documentElement.style.removeProperty('--watermark-size-px');
+            }, 1000); 
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const printButton1 = document.getElementById('printPdfButton1');
+            const printButton2 = document.getElementById('printPdfButton2');
+            
+            // ลบโค้ดที่เกี่ยวข้องกับ customTitleInput ออก
+            
+            fetchAndRenderVocabulary();
+            
+            if (printButton1) {
+                printButton1.addEventListener('click', createPdfWithBookmarks); 
+            }
+            if (printButton2) {
+                printButton2.addEventListener('click', createPdfWithCssPrint); 
+            }
+        });
+
+    </script>
+</body>
+</html>
