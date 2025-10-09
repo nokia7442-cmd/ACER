@@ -221,7 +221,7 @@
                 padding: 15px !important; 
             }
             
-            /* ลดขนาด word_meaning ลง 20% สำหรับลำดับที่ 2, 3, 5, 6, 8, 9, ... */
+            /* ลดขนาด word_meaning ลง 20% สำหรับคำที่ต้องลดขนาด */
             /* 22px * 0.8 = 17.6px */
             .word-meaning-reduced {
                 font-size: 17.6px !important; 
@@ -378,12 +378,9 @@
                     group.words.forEach(item => {
                         globalWordIndex++; // นับรวมทุกคำศัพท์
                         
-                        // ตรวจสอบรูปแบบ: ลดขนาดสำหรับลำดับ 2, 3, 5, 6, 8, 9, ... (คือ (Index % 3) เป็น 0 หรือ 2)
-                        // Note: ลำดับ 1 คือ (1 % 3 = 1) -> Normal
-                        // ลำดับ 2 คือ (2 % 3 = 2) -> Reduced
-                        // ลำดับ 3 คือ (3 % 3 = 0) -> Reduced
-                        // ลำดับ 4 คือ (4 % 3 = 1) -> Normal
-                        const isReduced = (globalWordIndex % 3 === 2) || (globalWordIndex % 3 === 0);
+                        // New Logic: ลดขนาดสำหรับลำดับที่ 4, 5, 7, 8, 10, 11, ...
+                        // Condition: Index >= 4 AND ((Index - 3) mod 3 is not 0)
+                        const isReduced = (globalWordIndex >= 4) && ((globalWordIndex - 3) % 3 !== 0);
                         const reducedClass = isReduced ? 'word-meaning-reduced' : '';
                         
                         htmlContent += `
