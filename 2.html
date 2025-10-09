@@ -221,6 +221,12 @@
                 padding: 15px !important; 
             }
             
+            /* ลดขนาด word_meaning ลง 20% สำหรับลำดับที่ 2, 3, 5, 6, 8, 9, ... */
+            /* 22px * 0.8 = 17.6px */
+            .word-meaning-reduced {
+                font-size: 17.6px !important; 
+            }
+
             /* Watermark Layer (Method 2: Background) */
             body::after {
                 content: attr(data-watermark-text); 
@@ -345,13 +351,13 @@
             
             let htmlContent = '';
             let groupCount = 0;
+            let globalWordIndex = 0; // ตัวนับรวมสำหรับคำศัพท์ทั้งหมด
 
             for (const groupKey in groupedVocabulary) {
                 const group = groupedVocabulary[groupKey];
                 if (group.words.length > 0) {
                     groupCount++;
                     
-                    // เพิ่มตัวนับ local สำหรับกลุ่มนี้ (รีเซ็ตทุกครั้งที่ขึ้นกลุ่มใหม่)
                     let localWordIndex = 1; 
                     
                     const cate1 = group.cate1;
@@ -370,12 +376,22 @@
 
                     // 2.2. Render words in the group
                     group.words.forEach(item => {
+                        globalWordIndex++; // นับรวมทุกคำศัพท์
+                        
+                        // ตรวจสอบรูปแบบ: ลดขนาดสำหรับลำดับ 2, 3, 5, 6, 8, 9, ... (คือ (Index % 3) เป็น 0 หรือ 2)
+                        // Note: ลำดับ 1 คือ (1 % 3 = 1) -> Normal
+                        // ลำดับ 2 คือ (2 % 3 = 2) -> Reduced
+                        // ลำดับ 3 คือ (3 % 3 = 0) -> Reduced
+                        // ลำดับ 4 คือ (4 % 3 = 1) -> Normal
+                        const isReduced = (globalWordIndex % 3 === 2) || (globalWordIndex % 3 === 0);
+                        const reducedClass = isReduced ? 'word-meaning-reduced' : '';
+                        
                         htmlContent += `
                             <div class="vocabulary-item">
                                 <!-- ใช้ localWordIndex สำหรับการนับต่อกลุ่ม -->
                                 <div class="word-title">${localWordIndex++}. ${item.word_name || ''}</div>
                                 <div class="pronunciation">/ ${item.word_ipa || ''} /</div>
-                                <div class="meaning">${item.word_meaning || ''}</div>
+                                <div class="meaning ${reducedClass}">${item.word_meaning || ''}</div>
                                 ${item.word_sen1 ? `
                                     <div class="example-pair">
                                         <!-- เพิ่มเลข 1. นำหน้า word_sen1 -->
@@ -543,7 +559,6 @@
             const printButton1 = document.getElementById('printPdfButton1');
             const printButton2 = document.getElementById('printPdfButton2');
             
-            // ลบโค้ดที่เกี่ยวข้องกับ customTitleInput ออก
             
             fetchAndRenderVocabulary();
             
