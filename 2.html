@@ -95,7 +95,7 @@
         }
 
         .vocabulary-item {
-            margin-bottom: 30px; /* เพิ่มระยะห่าง */
+            margin-bottom: 30px; /* เพิ่มระยะห่าง (สำหรับหน้าจอ) */
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -215,6 +215,12 @@
             }
             /* ----------------------------------------------------------------- */
 
+            /* ลดระยะห่างบนล่างของแต่ละการ์ดคำศัพท์สำหรับ PDF */
+            .vocabulary-item {
+                margin-bottom: 10px !important; 
+                padding: 15px !important; 
+            }
+            
             /* Watermark Layer (Method 2: Background) */
             body::after {
                 content: attr(data-watermark-text); 
