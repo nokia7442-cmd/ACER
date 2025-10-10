@@ -103,7 +103,7 @@
             transition: transform 0.2s;
         }
         
-        /* word_name */
+        /* word_name - ไม่เพิ่มขนาดตามที่ร้องขอ (ปรับจาก 22px เป็น 24px เพื่อให้เข้ากับ Header ที่ใหญ่ขึ้น) */
         .word-title {
             font-size: 24px; 
             font-weight: 800;
@@ -120,7 +120,7 @@
         }
         
         .meaning {
-            /* ขนาดปกติ */
+            /* เพิ่มขนาด */
             font-size: 22px; 
             font-weight: 700;
             color: #2d3748; 
@@ -193,7 +193,7 @@
             transform: translateY(-1px);
         }
 
-        /* --- CSS Print Media Styles: Optimized for A4 Fit --- */
+        /* --- CSS Print Media Styles --- */
         @media print {
              body {
                 background-color: white !important;
@@ -203,8 +203,6 @@
                 padding: 0;
                 color: black !important;
                 position: relative;
-                /* ลด line-height ใน PDF เพื่อเพิ่มความหนาแน่น */
-                line-height: 1.4; 
             }
             .print-button-container, .title-input-container {
                 display: none !important;
@@ -216,45 +214,17 @@
                 margin-top: 0;
             }
             /* ----------------------------------------------------------------- */
-            
-            /* ลดขนาดฟอนต์หัวข้อกลุ่มและเนื้อหาเล็กน้อยเพื่อให้ภาพรวมแน่นขึ้น */
-            .group-header h2 { font-size: 22px; }
-            .group-header p { font-size: 16px; }
 
-            /* ปรับปรุงการ์ดคำศัพท์ */
+            /* ลดระยะห่างบนล่างของแต่ละการ์ดคำศัพท์สำหรับ PDF */
             .vocabulary-item {
-                margin-bottom: 8px !important; /* ลดระยะห่างระหว่างการ์ด */
-                padding: 12px !important; /* ลด padding ในการ์ด */
-                border: 1px solid #ddd; /* ให้ขอบดูเบาลง */
+                margin-bottom: 5px !important; 
+                padding: 15px !important; 
             }
-
-            .word-title {
-                font-size: 20px; /* ลดขนาดชื่อคำศัพท์เล็กน้อย */
-                margin-bottom: 2px;
-            }
-
-            .pronunciation {
-                font-size: 15px;
-                margin-bottom: 5px; /* ลดระยะห่าง */
-            }
-
-            .meaning {
-                font-size: 18px; /* ลดขนาดคำแปลเล็กน้อย */
-                margin-bottom: 10px;
-                padding-bottom: 8px;
-            }
-
-            .example-pair {
-                margin-bottom: 5px; /* ลดระยะห่างระหว่างประโยคตัวอย่าง */
-                padding-left: 8px;
-            }
-
-            .example {
-                font-size: 16px;
-                margin-bottom: 1px;
-            }
-            .example-thai {
-                font-size: 14px;
+            
+            /* ลดขนาด word_meaning ลง 20% สำหรับคำที่ต้องลดขนาด */
+            /* 22px * 0.8 = 17.6px */
+            .word-meaning-reduced {
+                font-size: 17.6px !important; 
             }
 
             /* Watermark Layer (Method 2: Background) */
@@ -332,6 +302,8 @@
         const CSV_URL = `https://corsproxy.io/?${encodeURIComponent(ORIGINAL_CSV_URL)}`;
         const VOCAB_CONTAINER_ID = 'vocabulary-content';
         
+        // ลบ const WATERMARK_TEXT ออก และใช้ค่าจาก input แทน
+        
         const HEADERS = [
             'word_name', 'word_ipa', 'word_meaning', 'word_sen2', 'word_sentr2', 
             'word_sen1', 'word_sentr1', 'word_cate1', 'word_cate2'
@@ -379,7 +351,7 @@
             
             let htmlContent = '';
             let groupCount = 0;
-            // ลบ globalWordIndex ออกเนื่องจากไม่ได้ใช้แล้ว
+            let globalWordIndex = 0; // ตัวนับรวมสำหรับคำศัพท์ทั้งหมด
 
             for (const groupKey in groupedVocabulary) {
                 const group = groupedVocabulary[groupKey];
@@ -404,14 +376,19 @@
 
                     // 2.2. Render words in the group
                     group.words.forEach(item => {
-                        // ลบตรรกะการลดขนาดฟอนต์ออกทั้งหมด
+                        globalWordIndex++; // นับรวมทุกคำศัพท์
+                        
+                        // New Logic: ลดขนาดสำหรับลำดับที่ 4, 5, 7, 8, 10, 11, ...
+                        // Condition: Index >= 4 AND ((Index - 3) mod 3 is not 0)
+                        const isReduced = (globalWordIndex >= 4) && ((globalWordIndex - 3) % 3 !== 0);
+                        const reducedClass = isReduced ? 'word-meaning-reduced' : '';
                         
                         htmlContent += `
                             <div class="vocabulary-item">
                                 <!-- ใช้ localWordIndex สำหรับการนับต่อกลุ่ม -->
                                 <div class="word-title">${localWordIndex++}. ${item.word_name || ''}</div>
                                 <div class="pronunciation">/ ${item.word_ipa || ''} /</div>
-                                <div class="meaning">${item.word_meaning || ''}</div>
+                                <div class="meaning ${reducedClass}">${item.word_meaning || ''}</div>
                                 ${item.word_sen1 ? `
                                     <div class="example-pair">
                                         <!-- เพิ่มเลข 1. นำหน้า word_sen1 -->
